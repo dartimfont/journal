@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS disciplines (
     CONSTRAINT pk_discipline PRIMARY KEY (discipline)
 );
 
-CREATE TABLE IF NOT EXISTS groups (
+CREATE TABLE IF NOT EXISTS "groups" (
     "group" TEXT,
     CONSTRAINT pk_group PRIMARY KEY ("group")
 );
@@ -31,7 +31,15 @@ CREATE TABLE IF NOT EXISTS teachers (
     CONSTRAINT pk_id_teacher PRIMARY KEY (id_teacher)
 );
 
-CREATE TABLE IF NOT EXISTS timetable (
+CREATE TABLE  IF NOT EXISTS labs (
+    id_lab SERIAL,
+    lab TEXT,
+
+    CONSTRAINT pk_id_lab PRIMARY KEY (id_lab)
+);
+
+CREATE TABLE IF NOT EXISTS schedule (
+    id_schedule SERIAL,
     id_teacher INT,
     "group" TEXT,
     discipline TEXT,
@@ -44,7 +52,7 @@ CREATE TABLE IF NOT EXISTS timetable (
 
     CONSTRAINT group_groups_group_fk
     FOREIGN KEY ("group")
-    REFERENCES groups("group")
+    REFERENCES "groups"("group")
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
@@ -54,55 +62,59 @@ CREATE TABLE IF NOT EXISTS timetable (
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
-    CONSTRAINT uc_id_teacher_discipline UNIQUE (id_teacher, discipline),
-    CONSTRAINT uc_group_discipline UNIQUE ("group", discipline)
+    CONSTRAINT uc_id_teacher_group_discipline UNIQUE (id_teacher, "group", discipline),
+    CONSTRAINT pk_id_schedule PRIMARY KEY (id_schedule)
 );
 
-CREATE TABLE IF NOT EXISTS labs_for_groups (
-    id_lab SERIAL,
-    id_teacher INT,
-    lab TEXT,
+CREATE TABLE IF NOT EXISTS labs_for_schedule (
+    id_schedule INT,
+    id_lab INT,
 
-    CONSTRAINT id_teacher_teachers_id_teacher_fk
-    FOREIGN KEY (id_teacher)
-    REFERENCES teachers(id_teacher)
+    CONSTRAINT id_schedule_schedule_id_schedule_fk
+    FOREIGN KEY (id_schedule)
+    REFERENCES schedule(id_schedule)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
-    CONSTRAINT pk_id_lab PRIMARY KEY (id_lab)
+    CONSTRAINT id_lab_labs_id_lab_fk
+    FOREIGN KEY (id_lab)
+    REFERENCES labs(id_lab)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+    CONSTRAINT pk_id_schedule_id_lab PRIMARY KEY (id_schedule, id_lab)
 );
 
 CREATE TABLE IF NOT EXISTS students (
     id_student SERIAL,
-    id_teacher INT,
-    name TEXT,
+    "group" TEXT,
+    "name" TEXT,
     surname TEXT,
 
-    CONSTRAINT id_teacher_teachers_id_teacher_fk
-    FOREIGN KEY (id_teacher)
-    REFERENCES teachers(id_teacher)
+    CONSTRAINT group_groups_group_fk
+    FOREIGN KEY ("group")
+    REFERENCES "groups"("group")
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
     CONSTRAINT pk_id_student PRIMARY KEY (id_student)
 );
 
-CREATE TABLE IF NOT EXISTS labs_for_students (
-    id_lab INT,
+CREATE TABLE IF NOT EXISTS labs_for_student (
     id_student INT,
-    progress TEXT DEFAULT NULL,
+    id_lab INT,
 
-    CONSTRAINT id_lab_labs_for_groups_id_lab_fk
-    FOREIGN KEY (id_lab)
-    REFERENCES labs_for_groups(id_lab)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-
-    CONSTRAINT id_student_students_id_student_fk
+    CONSTRAINT id_student_schedule_id_student_fk
     FOREIGN KEY (id_student)
     REFERENCES students(id_student)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
-    CONSTRAINT pk_id_lab_id_student PRIMARY KEY (id_lab, id_student)
+    CONSTRAINT id_lab_labs_id_lab_fk
+    FOREIGN KEY (id_lab)
+    REFERENCES labs(id_lab)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+    CONSTRAINT pk_id_student_id_lab PRIMARY KEY (id_student, id_lab)
 );

@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import psycopg2
 
-import sys, re
+import sys
 
 
 class LoginItem(BaseModel):
@@ -16,6 +16,10 @@ class LoginItem(BaseModel):
 
 class GroupItem(BaseModel):
     group: str
+    
+class StudentItem(BaseModel):
+    group: str
+    discipline: str
 
 
 origins = [
@@ -47,16 +51,13 @@ cur = conn.cursor()
 
 app = FastAPI()
 
-
 @app.post('/login')
 async def login(item: LoginItem, response: Response):
     cur.execute("SELECT role FROM logins WHERE login=%s AND password=%s", (item.login, item.password))
     data = cur.fetchall()
     if len(data) > 0:
-        data = str(data)
-        data = re.sub(r'(?i)[^a-z]*', '', data)
-        print(data)
-        return {"role": data}
+        print(data[0])
+        return {"role": data[0]}
     else:
         response.status_code = status.HTTP_403_FORBIDDEN
         return {"error": "Not right password or login"}
@@ -74,19 +75,42 @@ async def groups(item: GroupItem, response: Response):
         cur.execute("INSERT INTO groups VALUES(%s)", (item.group,))
         conn.commit()
         return {"message": "ok"}
-
+    
 
 @app.get('/groups')
 async def groups():
     cur.execute("SELECT * FROM groups")
     data = cur.fetchall()
-    print(data)
-    return {"groups": data}
+    if len(data) > 0:
+        print(data)
+        return {"groups": data}
+    else:
+        return {"error": "groups not found"}
 
 
 @app.get('/disciplines')
 async def disciplines():
     cur.execute("SELECT * FROM disciplines")
     data = cur.fetchall()
-    print(data)
-    return {"disciplines": data}
+    if len(data) > 0:
+        print(data)
+        return {"disciplines": data}
+    else:
+        return {"error": "disciplines not found"}
+    
+@app.get('/students')
+async def students(item: StudentItem, response: Response):
+    cur.execute("""
+        SELECT * 
+        FROM students 
+        GROUP BY id_student 
+        HAVING \"group\" = '{0}'
+        ORDER BY id_student ASC
+        """.format(item.group))
+    data = cur.fetchall()
+    if len(data) > 0:
+        print(data)
+        return {"students": data}
+    else:
+        return {"error": "students not found"}
+       
