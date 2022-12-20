@@ -118,3 +118,19 @@ CREATE TABLE IF NOT EXISTS labs_for_student (
 
     CONSTRAINT pk_id_student_id_lab PRIMARY KEY (id_student, id_lab)
 );
+CREATE OR REPLACE FUNCTION update_labs_for_student() RETURNS trigger AS $$
+    DECLARE
+		max_songs numeric;
+	BEGIN
+		update labs_for_student SET id_lab = (SELECT id_schedule FROM schedule 
+		WHERE "group"= (SELECT "group" FROM students
+		WHERE id_student=( SELECT id_student FROM NEW
+		)));
+		RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER update_labs_for_student 
+AFTER INSERT OR UPDATE ON labs_for_student
+    FOR EACH ROW EXECUTE PROCEDURE update_labs_for_student();
+
