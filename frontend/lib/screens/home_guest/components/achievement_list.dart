@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:journal/constants.dart';
 
+import 'package:journal/globals.dart' as globals;
+
 class AchievementList extends StatefulWidget {
   @override
   _AchievementListState createState() => _AchievementListState();
@@ -14,21 +16,28 @@ class _AchievementListState extends State<AchievementList> {
   final List<Group> _achievements = [];
 
   Future<List<Group>> fetchJson() async {
-    dynamic response = await http.get(
-        Uri.parse("http://" + hostAndPort + "/groups"),
+    dynamic params = jsonEncode({
+      "id_group": globals.id_group,
+      "id_discipline": globals.id_discipline,
+      "id_student": globals.id_student
+    });
+    dynamic response = await http.post(
+      Uri.parse("http://" + hostAndPort + "/selected_labs"),
         headers: {
-          'accept': 'application/json; charset=UTF-8',
-        }
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: params
     );
 
-    List<Group> glist = [];
+    List<Group> alist = [];
     if (response.statusCode == 200) {
       var urjson = jsonDecode(response.body);
+      print(urjson);
       for (dynamic jsondata in urjson) {
-        glist.add(Group.fromJson(jsondata));
+        alist.add(Group.fromJson(jsondata));
       }
     }
-    return glist;
+    return alist;
   }
 
   @override
@@ -46,10 +55,19 @@ class _AchievementListState extends State<AchievementList> {
     return ListView.builder(
         itemCount: _achievements.length,
         itemBuilder: (context, index) {
-          return Card(
-            child: Column(
+          return Container(
+            child: Row(
               children: [
-                Text(_achievements[index].group.toString()),
+                Text(
+                  "  " + _achievements[index].lab.toString(),
+                  style: TextStyle(fontSize: 24),
+                  textAlign: TextAlign.left,
+                ),
+                Spacer(),
+                Checkbox(
+                  value: _achievements[index].achieve,
+
+                )
               ],
             ),
           );
@@ -59,20 +77,28 @@ class _AchievementListState extends State<AchievementList> {
 }
 
 class Group {
-  int id_group;
-  String group;
+  int id_student;
+  int id_lab;
+  String lab;
+  bool achieve;
   Group({
-    @required this.id_group,
-    @required this.group,
+    @required this.id_student,
+    @required this.id_lab,
+    @required this.lab,
+    @required this.achieve,
   });
 
   factory Group.fromJson(Map<String, dynamic> json) => Group(
-    id_group: json["id_group"],
-    group: json["group"],
+    id_student: json["id_student"],
+    id_lab: json["id_lab"],
+    lab: json["lab"],
+    achieve: json["achieve"],
   );
 
   Map<String, dynamic> toJson() => {
-    "id_group": id_group,
-    "group": group,
+    "id_student": id_student,
+    "id_lab": id_lab,
+    "lab": lab,
+    "achieve": achieve,
   };
 }

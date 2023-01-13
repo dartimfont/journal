@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS labs_for_schedule (
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
-    CONSTRAINT pk_id_schedule_id_lab PRIMARY KEY (id_schedule, id_lab)
+    CONSTRAINT pk_id_lab_on_labs_for_schedule PRIMARY KEY (id_lab)
 );
 
 CREATE TABLE IF NOT EXISTS students (
@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS labs_for_student (
     id_student INT,
     id_lab INT,
+    achieve BOOLEAN default FALSE,
 
     CONSTRAINT id_student_schedule_id_student_fk
     FOREIGN KEY (id_student)

@@ -69,7 +69,7 @@ class _SignFormState extends State<SignForm> {
                   "password": md5.convert(utf8.encode(password)).toString(),
                 });
                 final response = await http.post(
-                    Uri.parse('http://' + hostAndPort + '/login'),
+                    Uri.parse('http://' + hostAndPort + '/logins'),
                     headers: <String, String>{
                       'Content-Type': 'application/json; charset=UTF-8',
                     },
