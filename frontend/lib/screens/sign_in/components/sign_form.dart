@@ -4,10 +4,12 @@ import 'package:crypto/crypto.dart';
 
 import 'package:journal/components/custom_suffix_icon.dart';
 import 'package:journal/components/default_button.dart';
+import 'package:journal/components/error_message.dart';
 import 'package:journal/components/form_error.dart';
 import 'package:journal/constants.dart';
 import 'package:journal/screens/forgot_password/forgot_password_screen.dart';
 import 'package:journal/screens/home_admin/home_admin.dart';
+import 'package:journal/screens/home_admin_test/home_admin_test.dart';
 import 'package:journal/screens/home_teacher/home_teacher.dart';
 import 'package:journal/size_config.dart';
 
@@ -35,28 +37,28 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(20)),
           buildPasswordFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: kPrimaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value;
-                  });
-                },
-              ),
-              Text("Remember me"),
-              Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(context, ForgotPasswordScreen.routeName),
-                child: Text(
-                  "Forgot Password",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     // Checkbox(
+          //     //   value: remember,
+          //     //   activeColor: kPrimaryColor,
+          //     //   onChanged: (value) {
+          //     //     setState(() {
+          //     //       remember = value;
+          //     //     });
+          //     //   },
+          //     // ),
+          //     // Text("Remember me"),
+          //     Spacer(),
+          //     GestureDetector(
+          //       onTap: () => Navigator.pushNamed(context, ForgotPasswordScreen.routeName),
+          //       child: Text(
+          //         "Forgot Password",
+          //         style: TextStyle(decoration: TextDecoration.underline),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(30)),
           DefaultButton(
@@ -87,30 +89,7 @@ class _SignFormState extends State<SignForm> {
                   }
                 } else if (status == 403) {
                   print(responseBody["error"]);
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        title: Text(
-                          "Error!",
-                          textAlign: TextAlign.center,
-                        ),
-                        content: Text(
-                          responseBody["error"],
-                          textAlign: TextAlign.center,
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text('Ok'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  buildShowDialog(context, responseBody);
                 }
               }
             },

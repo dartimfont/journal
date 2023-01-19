@@ -5,14 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2790d23f-410c-4963-bfc9-a3c11716a739" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../data_base/trigger.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/assets/icons/Edit.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/components/error_message.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/discipline_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/globals_admin.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/group_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin_test/components/discipline_list_admin.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin_test/components/group_list_admin.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin_test/home_admin_test.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/achievement_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/discipline_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/group_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/lab_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/student_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/awesome_api.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/awesome_api.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../data_base/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../data_base/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../data_base/main.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../data_base/main.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/lib/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/constants.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_guest/components/body.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_guest/components/body.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/body.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/body.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/home_admin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/home_admin.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_guest/components/achievement_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_guest/components/achievement_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_guest/components/group_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_guest/components/group_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/body.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/components/body.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/home_teacher.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_teacher/home_teacher.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/sign_in/components/sign_form.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/sign_in/components/sign_form.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,46 +1,45 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:journal/components/error_message.dart';
 import 'package:journal/constants.dart';
 
 import 'package:journal/globals.dart' as globals;
+import 'package:journal/size_config.dart';
 
-class GroupList extends StatefulWidget {
+class GroupListAdmin extends StatefulWidget {
+  static String routeName = "/group_list_admin";
+
   @override
   _GroupListState createState() => _GroupListState();
 }
 
-class _GroupListState extends State<GroupList> {
+class _GroupListState extends State<GroupListAdmin> {
   final List<Group> _groups = [];
 
   Future<List<Group>> fetchJson() async {
     dynamic response = await http.get(
         Uri.parse("http://" + hostAndPort + "/groups"),
         headers: {
-          'accept': 'application/json; charset=UTF-8',
+          "accept": "application/json; charset=UTF-8",
         }
     );
-    int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
 
     List<Group> groupList = [];
-    if (status == 200) {
-      var urlJson = responseBody;
+    if (response.statusCode == 200) {
+      var urlJson = jsonDecode(response.body);
       for (dynamic jsonData in urlJson) {
         groupList.add(Group.fromJson(jsonData));
       }
-    } else {
-      print(responseBody["error"]);
-      buildShowDialog(context, responseBody);
     }
     return groupList;
   }
 
   @override
   void initState() {
+    _groups.clear();
     fetchJson().then((value) {
       setState(() {
         _groups.addAll(value);
@@ -69,12 +68,35 @@ class _GroupListState extends State<GroupList> {
               margin: EdgeInsets.symmetric(vertical: 4),
               padding: EdgeInsets.symmetric(vertical: 8),
               color: index == globals.selectedIndexInGroups ? Colors.black12: Colors.white60,
-              child: Text(
-                _groups[index].group.toString(),
-                style: TextStyle(fontSize: 24),
-                textAlign: TextAlign.center,
+              child: Row(
+                children: [
+                  SizedBox(width: SizeConfig.screenWidth * 0.04),
+                  Expanded(
+                    child: Text(
+                      _groups[index].group.toString(),
+                      style: TextStyle(fontSize: getProportionateScreenHeight(24)),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/Edit.svg",
+                      color: kTextColor,
+                      height: getProportionateScreenHeight(25),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/Trash.svg",
+                      color: kTextColor,
+                      height: getProportionateScreenHeight(25),
+                    ),
+                  ),
+                  SizedBox(width: SizeConfig.screenWidth * 0.04),
+                ]
               ),
-            ),
+            )
           );
         }
     );

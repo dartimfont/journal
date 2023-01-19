@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:journal/components/error_message.dart';
 import 'package:journal/constants.dart';
 
 import 'package:journal/globals.dart' as globals;
+import 'package:journal/size_config.dart';
 
 class StudentList extends StatefulWidget {
   @override
@@ -77,11 +79,44 @@ class _StudentListState extends State<StudentList> {
               margin: EdgeInsets.symmetric(vertical: 4),
               padding: EdgeInsets.symmetric(vertical: 8),
               color: index == globals.selectedIndexInStudents ? Colors.black12: Colors.white60,
-              child: Text(
-                  _students[index].surname + " " + _students[index].name,
-                  style: TextStyle(fontSize: 24),
-                  textAlign: TextAlign.center,
-                ),
+              child: Row (
+                children: [
+                  SizedBox(width: SizeConfig.screenWidth * 0.04),
+                  Expanded(child: Text(
+                    _students[index].surname,
+                    style: TextStyle(fontSize: 24),
+                  )),
+                  IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/Edit.svg",
+                      color: kTextColor,
+                      height: getProportionateScreenHeight(25),
+                    ),
+                  ),
+                  Expanded(child: Text(
+                    _students[index].name,
+                    style: TextStyle(fontSize: 24),
+                  )),
+                  IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/Edit.svg",
+                      color: kTextColor,
+                      height: getProportionateScreenHeight(25),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/Trash.svg",
+                      color: kTextColor,
+                      height: getProportionateScreenHeight(25),
+                    ),
+                  ),
+                  SizedBox(width: SizeConfig.screenWidth * 0.04),
+                ],
+              )
             ),
           );
         }

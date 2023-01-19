@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:journal/components/error_message.dart';
 import 'package:journal/constants.dart';
 
 import 'package:journal/globals.dart' as globals;
@@ -23,18 +22,13 @@ class _GroupListState extends State<GroupList> {
           'accept': 'application/json; charset=UTF-8',
         }
     );
-    int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
 
     List<Group> groupList = [];
-    if (status == 200) {
-      var urlJson = responseBody;
+    if (response.statusCode == 200) {
+      var urlJson = jsonDecode(response.body);
       for (dynamic jsonData in urlJson) {
         groupList.add(Group.fromJson(jsonData));
       }
-    } else {
-      print(responseBody["error"]);
-      buildShowDialog(context, responseBody);
     }
     return groupList;
   }

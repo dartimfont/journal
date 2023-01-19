@@ -119,3 +119,6 @@ CREATE TABLE IF NOT EXISTS labs_for_student (
 
     CONSTRAINT pk_id_student_id_lab PRIMARY KEY (id_student, id_lab)
 );
+
+
+--UPDATE groups SET "group"='group2' WHERE id_group=17

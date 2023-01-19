@@ -17,6 +17,11 @@ class GroupItem(BaseModel):
     group: str
 
 
+class GroupItemWithId(BaseModel):
+    id_group: int
+    group: str
+
+
 class DisciplineItem(BaseModel):
     discipline: str
 
@@ -84,7 +89,7 @@ cur = conn.cursor(cursor_factory=RealDictCursor)
 
 # Groups
 @app.get('/groups')
-async def groups():
+async def groups(response: Response):
     cur.execute("""
         SELECT *
         FROM \"groups\" 
@@ -96,6 +101,7 @@ async def groups():
         print(data)
         return data
     else:
+        response.status_code = status.HTTP_404_NOT_FOUND
         return {"error": "groups not found"}
 
 
@@ -108,7 +114,7 @@ async def groups(item: GroupItem, response: Response):
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "Such group is already taken!"}
     else:
-        cur.execute("INSERT INTO \"groups\" VALUES('%s')" % item.group)
+        cur.execute("INSERT INTO groups(\"group\") VALUES('{0}')".format(item.group))
         conn.commit()
         return {"message": "ok"}
 
@@ -123,6 +129,25 @@ async def groups(item: GroupItem, response: Response):
         return {"error": "Such group does not exist!"}
     else:
         cur.execute("DELETE FROM \"groups\" WHERE \"group\"='{0}'".format(item.group))
+        conn.commit()
+        return {"message": "ok"}
+
+
+@app.put('/groups')
+async def groups(item: GroupItemWithId, response: Response):
+    cur.execute("SELECT \"id_group\" FROM \"groups\" WHERE \"id_group\"='{0}'".format(item.id_group))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Group with that ID does not exist!"}
+    else:
+        try:
+            cur.execute(
+                "UPDATE \"groups\" SET \"group\"='{0}' WHERE id_group='{1}'".format(item.group, item.id_group))
+        except Exception as err:
+            conn.rollback()
+            return {"error": "%s" % err}
         conn.commit()
         return {"message": "ok"}
 
@@ -183,6 +208,7 @@ async def students_get(item: GroupItem, response: Response):
         print(data)
         return data
     else:
+        response.status_code = status.HTTP_404_NOT_FOUND
         return {"error": "students not found"}
 
 
@@ -197,7 +223,7 @@ async def students(item: StudentItem, response: Response):
     else:
         try:
             cur.execute("INSERT INTO students VALUES(%d, '%s', '%s', '%s')" % (
-            item.id_student, item.name, item.group, item.surname))
+                item.id_student, item.name, item.group, item.surname))
         except Exception as err:
             conn.rollback()
             return {"error": "%s" % err}
@@ -238,6 +264,7 @@ async def students(item: StudentItem, response: Response):
         conn.commit()
         return {"message": "ok"}
 
+
 # Labs
 # Get labs by group, discipline, student
 @app.post('/selected_labs')
@@ -255,19 +282,13 @@ async def selected_labs(item: SelectedLabsItem, response: Response):
         """.format(item.id_group, item.id_discipline, item.id_student))
 
     data = cur.fetchall()
-    print(data)
 
-    return data
-
-
-
-
-
-
-
-
-
-
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": "Such labs does not exist"}
 
 @app.post('/logins')
 async def logins(item: LoginItem, response: Response):
@@ -374,7 +395,7 @@ async def teachers(item: TeacherItem, response: Response):
     else:
         try:
             cur.execute("INSERT INTO teachers VALUES ( %d, '%s', '%s', '%s')" % (
-            item.id_teacher, item.login, item.name, item.surname))
+                item.id_teacher, item.login, item.name, item.surname))
         except Exception as err:
             conn.rollback()
             return {"error": "%s" % err}
@@ -432,10 +453,9 @@ async def schedules(item: ScheduleItem, response: Response):
     else:
         cur.execute(
             "INSERT INTO schedules VALUES(%d, %d, '%s', '%s')" % (
-            item.id_schedule, item.id_teacher, item.group, item.discipline))
+                item.id_schedule, item.id_teacher, item.group, item.discipline))
         conn.commit()
     return {"message": "ok"}
-
 
 
 @app.get('/teachers')

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:journal/components/error_message.dart';
 import 'package:journal/constants.dart';
 
 import 'package:journal/globals.dart' as globals;
@@ -28,21 +27,14 @@ class _StudentListState extends State<StudentList> {
         body: params
     );
 
-    int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
-    print(status);
-    print(responseBody);
-
-    List<Student> studentList = [];
-    if (status == 200) {
-      var urjson = responseBody;
+    List<Student> slist = [];
+    if (response.statusCode == 200) {
+      var urjson = jsonDecode(response.body);
       for (dynamic jsondata in urjson) {
-        studentList.add(Student.fromJson(jsondata));
+        slist.add(Student.fromJson(jsondata));
       }
-    } else {
-      buildShowDialog(context, responseBody);
     }
-    return studentList;
+    return slist;
   }
 
   @override

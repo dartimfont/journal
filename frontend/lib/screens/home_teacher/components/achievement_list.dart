@@ -1,11 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
-import 'package:journal/components/error_message.dart';
 import 'package:journal/constants.dart';
-
 import 'package:journal/globals.dart' as globals;
 import 'package:journal/size_config.dart';
 
@@ -31,20 +27,13 @@ class _AchievementListState extends State<AchievementList> {
         body: params
     );
 
-    int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
-    print(status);
-    print(responseBody);
-
     List<Group> alist = [];
-    if (status == 200) {
-      var urjson = responseBody;
+    if (response.statusCode == 200) {
+      var urjson = jsonDecode(response.body);
       print(urjson);
       for (dynamic jsondata in urjson) {
         alist.add(Group.fromJson(jsondata));
       }
-    } else {
-      buildShowDialog(context, responseBody);
     }
     return alist;
   }
@@ -77,6 +66,13 @@ class _AchievementListState extends State<AchievementList> {
                   ),
                   SizedBox(width: SizeConfig.screenWidth * 0.04),
                   Checkbox(
+                    onChanged: (bool isMark) {
+                      setState(() {
+                        _achievements[index].achieve = isMark;
+                        // Update achieve on data base
+
+                      });
+                    },
                     value: _achievements[index].achieve,
                   ),
                   SizedBox(width: SizeConfig.screenWidth * 0.04),
