@@ -5,10 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:journal/components/error_message.dart';
-import 'package:journal/screens/home_admin/components/text_dialog_group.dart';
 import 'package:journal/constants.dart';
 
-import 'package:journal/globals.dart' as globals;
 import 'globals_admin.dart' as globals_admin;
 import 'package:journal/size_config.dart';
 
@@ -18,14 +16,14 @@ class GroupList extends StatefulWidget {
 }
 
 class _GroupListState extends State<GroupList> {
+  final List<Group> _groups = [];
+  TextEditingController controller;
 
   Future<List<Group>> fetchJson() async {
-    dynamic response = await http.get(
-        Uri.parse("http://" + hostAndPort + "/groups"),
-        headers: {
-          "accept": "application/json; charset=UTF-8",
-        }
-    );
+    dynamic response = await http
+        .get(Uri.parse("http://" + hostAndPort + "/groups"), headers: {
+      "accept": "application/json; charset=UTF-8",
+    });
 
     List<Group> groupList = [];
     if (response.statusCode == 200) {
@@ -37,13 +35,12 @@ class _GroupListState extends State<GroupList> {
     return groupList;
   }
 
-
   @override
   void initState() {
-    globals_admin.groups.clear();
+    _groups.clear();
     fetchJson().then((value) {
       setState(() {
-        globals_admin.groups.addAll(value);
+        _groups.addAll(value);
       });
     });
     super.initState();
@@ -51,97 +48,181 @@ class _GroupListState extends State<GroupList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: globals_admin.groups.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                globals.selectedIndexInGroups = index;
-                globals.id_group = globals_admin.groups[index].id_group;
-                globals.group = globals_admin.groups[index].group;
-
-                print(globals.id_group);
-                print(globals.group);
-              });
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 4),
-              padding: EdgeInsets.symmetric(vertical: 8),
-              color: index == globals.selectedIndexInGroups ? Colors.black12: Colors.white60,
-              child: Row(
-                children: [
-                  SizedBox(width: SizeConfig.screenWidth * 0.04),
-                  Expanded(
-                    child: Text(
-                      globals_admin.groups[index].group.toString(),
-                      style: TextStyle(fontSize: getProportionateScreenHeight(24)),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      print(globals_admin.groups[index].group);
-                      final group = await showTextDialog(
-                        context,
-                        title: "Change Group",
-                        id_group: globals_admin.groups[index].id_group,
-                        group: globals_admin.groups[index].group,
-                      );
-
-                     // print(globals_admin.groups[index].group);
-                      globals_admin.groups.clear();
-                      fetchJson().then((value) {
-                        setState(() {
-                          globals_admin.groups.addAll(value);
-                        });
-                      });
-                    },
-                    icon: SvgPicture.asset(
-                      "assets/icons/Edit.svg",
-                      color: kTextColor,
-                      height: getProportionateScreenHeight(25),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      var data = jsonEncode({
-                        "group": globals_admin.groups[index].group,
-                      });
-                      final response = await http.delete(
-                        Uri.parse('http://' + hostAndPort + '/groups'),
-                        headers: <String, String>{
-                          "Content-Type": "application/json; charset=UTF-8",
-                        },
-                        body: data
-                      );
-                      int status = response.statusCode;
-                      dynamic responseBody = jsonDecode(response.body);
-                      print(response.statusCode);
-                      print(jsonDecode(response.body));
-                      if (status == 200) {
-                        // success
-                        globals_admin.groups.clear();
-                        fetchJson().then((value) {
-                          setState(() {
-                            globals_admin.groups.addAll(value);
-                          });
-                        });
-                      } else {
-                        buildShowDialog(context, responseBody);
-                      }
-                    },
-                    icon: SvgPicture.asset(
-                      "assets/icons/Trash.svg",
-                      color: kTextColor,
-                      height: getProportionateScreenHeight(25),
-                    ),
-                  ),
-                  SizedBox(width: SizeConfig.screenWidth * 0.04),
-                ]
+    return Column(
+      children: [
+        Row(
+          children: [
+            SizedBox(width: SizeConfig.screenWidth * 0.04),
+            Expanded(
+              child: Text(
+                "Groups",
+                style: TextStyle(fontSize: 24),
               ),
-            )
-          );
-        }
+            ),
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/Plus Icon.svg",
+                color: kTextColor,
+                height: getProportionateScreenHeight(25),
+              ),
+              onPressed: () async {
+                var data = jsonEncode({"group": "group"});
+                dynamic response = await http.post(
+                  Uri.parse("http://" + hostAndPort + "/groups"),
+                  headers: {
+                    "Content-Type": "application/json; charset=UTF-8",
+                  },
+                  body: data,
+                );
+                int status = response.statusCode;
+                dynamic responseBody = jsonDecode(response.body);
+                if (response.statusCode == 200) {
+                  _groups.clear();
+                  fetchJson().then((value) {
+                    setState(() {
+                      _groups.addAll(value);
+                    });
+                  });
+                } else {
+                  buildShowDialog(context, responseBody);
+                }
+              },
+            ),
+            SizedBox(width: SizeConfig.screenWidth * 0.04),
+          ],
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _groups.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      globals_admin.selectedIndexInGroups = index;
+                      globals_admin.id_group = _groups[index].id_group;
+                      globals_admin.group = _groups[index].group;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    color: index == globals_admin.selectedIndexInGroups
+                        ? Colors.black12
+                        : Colors.white60,
+                    child: Row(children: [
+                      SizedBox(width: SizeConfig.screenWidth * 0.04),
+                      Expanded(
+                        child: Text(
+                          _groups[index].group.toString(),
+                          style: TextStyle(
+                              fontSize: getProportionateScreenHeight(24)),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          controller =
+                              TextEditingController(text: _groups[index].group);
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false, // user must tap button!
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Rename group"),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                content: TextField(
+                                  controller: controller,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                    child: const Text('Approve'),
+                                    onPressed: () async {
+                                      var data = jsonEncode({
+                                        "id_group": _groups[index].id_group,
+                                        "group": controller.text,
+                                      });
+
+                                      final response = await http.put(
+                                          Uri.parse('http://' +
+                                              hostAndPort +
+                                              '/groups'),
+                                          headers: <String, String>{
+                                            "Content-Type":
+                                                "application/json; charset=UTF-8",
+                                          },
+                                          body: data);
+
+                                      int status = response.statusCode;
+                                      dynamic responseBody =
+                                          jsonDecode(response.body);
+                                      print(response.statusCode);
+                                      print(jsonDecode(response.body));
+
+                                      if (status == 200) {
+                                        _groups.clear();
+                                        fetchJson().then((value) {
+                                          setState(() {
+                                            _groups.addAll(value);
+                                          });
+                                        });
+                                      } else {
+
+                                      }
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        icon: SvgPicture.asset(
+                          "assets/icons/Edit.svg",
+                          color: kTextColor,
+                          height: getProportionateScreenHeight(25),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          var data = jsonEncode({
+                            "group": _groups[index].group,
+                          });
+                          dynamic response = await http.delete(
+                            Uri.parse("http://" + hostAndPort + "/groups"),
+                            headers: {
+                              "Content-Type": "application/json; charset=UTF-8",
+                            },
+                            body: data,
+                          );
+                          int status = response.statusCode;
+                          dynamic responseBody = jsonDecode(response.body);
+                          if (response.statusCode == 200) {
+                            _groups.clear();
+                            fetchJson().then((value) {
+                              setState(() {
+                                _groups.addAll(value);
+                              });
+                            });
+                          } else {
+                            buildShowDialog(context, responseBody);
+                          }
+                        },
+                        icon: SvgPicture.asset(
+                          "assets/icons/Trash.svg",
+                          color: kTextColor,
+                          height: getProportionateScreenHeight(25),
+                        ),
+                      ),
+                      SizedBox(width: SizeConfig.screenWidth * 0.04),
+                    ]),
+                  ));
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -155,12 +236,12 @@ class Group {
   });
 
   factory Group.fromJson(Map<String, dynamic> json) => Group(
-    id_group: json["id_group"],
-    group: json["group"],
-  );
+        id_group: json["id_group"],
+        group: json["group"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id_group": id_group,
-    "group": group,
-  };
+        "id_group": id_group,
+        "group": group,
+      };
 }

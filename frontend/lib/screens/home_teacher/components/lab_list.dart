@@ -109,15 +109,15 @@ class _LabListState extends State<LabList> {
               return GestureDetector(
                 onTap: () {
                   setState(() {
-                    globals_teacher.selectedIndexInDisciplines = index;
-                    globals_teacher.id_discipline = _labs[index].id_lab;
-                    globals_teacher.discipline = _labs[index].lab;
+                    globals_teacher.selectedIndexInLabs = index;
+                    globals_teacher.id_lab = _labs[index].id_lab;
+                    globals_teacher.lab = _labs[index].lab;
                   });
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(vertical: 4),
                   padding: EdgeInsets.symmetric(vertical: 8),
-                  color: index == globals_teacher.selectedIndexInDisciplines
+                  color: index == globals_teacher.selectedIndexInLabs
                       ? Colors.black12
                       : Colors.white60,
                   child: Row(

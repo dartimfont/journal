@@ -22,3 +22,9 @@ int selectedIndexInStudents = -1;
 int id_student = -1;
 String surname = "";
 String name = "";
+
+// Students
+int selectedIndexInLabs = -1;
+int id_lab = -1;
+String lab = "";
+

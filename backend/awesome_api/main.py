@@ -37,6 +37,11 @@ class DisciplineItem(BaseModel):
     discipline: str
 
 
+class DisciplineWithIdItem(BaseModel):
+    id_discipline: int
+    discipline: str
+
+
 class StudentID(BaseModel):
     id_student: int
 
@@ -189,8 +194,11 @@ async def groups(item: GroupItemWithId, response: Response):
     elif len(data) == 1:
         try:
             cur.execute(
-                "UPDATE \"groups\" SET \"group\"='{0}' WHERE id_group='{1}'".format(item.group, item.id_group))
+                """UPDATE \"groups\" SET \"group\"='{0}' 
+                WHERE id_group='{1}'
+                """.format(item.group, item.id_group))
         except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
             conn.rollback()
             return {"error": "%s" % err}
         conn.commit()
@@ -255,6 +263,28 @@ async def disciplines(item: DisciplineItem, response: Response):
         return {"error": "Such discipline does not exist!"}
     else:
         cur.execute("DELETE FROM \"disciplines\" WHERE \"discipline\"='{0}'".format(item.discipline))
+        conn.commit()
+        return {"message": "ok"}
+
+
+@app.put('/disciplines')
+async def disciplines(item: DisciplineWithIdItem, response: Response):
+    cur.execute("SELECT \"id_discipline\" FROM \"disciplines\" WHERE \"id_discipline\"='{0}'".format(item.id_discipline))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Group with that ID does not exist!"}
+    elif len(data) == 1:
+        try:
+            cur.execute(
+                """UPDATE \"disciplines\" SET \"discipline\"='{0}' 
+                WHERE id_discipline='{1}'
+                """.format(item.discipline, item.id_discipline))
+        except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            conn.rollback()
+            return {"error": "%s" % err}
         conn.commit()
         return {"message": "ok"}
 

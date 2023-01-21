@@ -128,3 +128,4 @@ FROM schedule
 JOIN labs ON labs.lab = 'lab'
 GROUP BY id_schedule, id_lab
 HAVING id_teacher = 1 AND id_group = 2 AND id_discipline = 1;
+

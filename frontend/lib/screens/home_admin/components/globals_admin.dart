@@ -1,8 +1,30 @@
 library globals_admin;
 
-import 'package:flutter/material.dart';
+int page_index = 0;
 
-import 'group_list.dart';
+// Teacher
+int id_teacher = -1;
+String teacher = "";
+String login = "";
 
-final List<Group> groups = [];
-final GlobalKey<AnimatedListState> listKeyGroups = GlobalKey();
+// Groups
+int selectedIndexInGroups = -1;
+int id_group = -1;
+String group = "";
+
+// Disciplines
+int selectedIndexInDisciplines = -1;
+int id_discipline = -1;
+String discipline = "";
+
+// Students
+int selectedIndexInStudents = -1;
+int id_student = -1;
+String surname = "";
+String name = "";
+
+// Students
+int selectedIndexInLabs = -1;
+int id_lab = -1;
+String lab = "";
+

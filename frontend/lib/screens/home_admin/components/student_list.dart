@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:journal/components/error_message.dart';
 import 'package:journal/constants.dart';
 
-import 'package:journal/globals.dart' as globals;
+import 'globals_admin.dart' as globals_admin;
 import 'package:journal/size_config.dart';
 
 class StudentList extends StatefulWidget {
@@ -20,7 +20,7 @@ class _StudentListState extends State<StudentList> {
 
   Future<List<Student>> fetchJson() async {
     dynamic params = jsonEncode({
-      "group": globals.group
+      "group": globals_admin.group
     });
     dynamic response = await http.post(
         Uri.parse("http://" + hostAndPort + "/students_get"),
@@ -65,20 +65,20 @@ class _StudentListState extends State<StudentList> {
           return GestureDetector(
             onTap: () {
               setState(() {
-                globals.selectedIndexInStudents = index;
-                globals.id_student = _students[index].id_student;
-                globals.surname = _students[index].surname;
-                globals.name = _students[index].name;
+                globals_admin.selectedIndexInStudents = index;
+                globals_admin.id_student = _students[index].id_student;
+                globals_admin.surname = _students[index].surname;
+                globals_admin.name = _students[index].name;
 
-                print(globals.id_student);
-                print(globals.surname);
-                print(globals.name);
+                print(globals_admin.id_student);
+                print(globals_admin.surname);
+                print(globals_admin.name);
               });
             },
             child: Container(
               margin: EdgeInsets.symmetric(vertical: 4),
               padding: EdgeInsets.symmetric(vertical: 8),
-              color: index == globals.selectedIndexInStudents ? Colors.black12: Colors.white60,
+              color: index == globals_admin.selectedIndexInStudents ? Colors.black12: Colors.white60,
               child: Row (
                 children: [
                   SizedBox(width: SizeConfig.screenWidth * 0.04),

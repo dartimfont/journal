@@ -28,77 +28,9 @@ class _BodyState extends State<Body> {
     DisciplineList(),
   ];
 
-
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-    });
-  }
-
-  void addGroup() async {
-    var data = jsonEncode({
-      "group": "group",
-    });
-
-    final response = await http.post(
-      Uri.parse('http://' + hostAndPort + '/groups'),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-      },
-      body: data
-    );
-
-    int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
-    print(response.statusCode);
-    print(jsonDecode(response.body));
-
-    if (status == 200) {
-    } else {
-      buildShowDialog(context, responseBody);
-    }
-  }
-
-  void addDiscipline() async {
-    var data = jsonEncode({
-      "discipline": "discipline",
-    });
-
-    final response = await http.post(
-        Uri.parse('http://' + hostAndPort + '/disciplines'),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-        },
-        body: data
-    );
-
-    int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
-    print(response.statusCode);
-    print(jsonDecode(response.body));
-
-    if (status == 200) {
-    } else {
-      buildShowDialog(context, responseBody);
-    }
-  }
-
-  void addSomthing(){
-    setState(() {
-      if (_selectedIndex == 0) {
-        print(_selectedIndex);
-        addGroup();
-      } else if (_selectedIndex == 1) {
-        print(_selectedIndex);
-        addDiscipline();
-      } else if (_selectedIndex == 2) {
-        print(_selectedIndex);
-      } else if (_selectedIndex == 3) {
-        print(_selectedIndex);
-      } else if (_selectedIndex == 4) {
-        print(_selectedIndex);
-      }
     });
   }
 
@@ -107,12 +39,6 @@ class _BodyState extends State<Body> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Home for admin"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: addSomthing,
-          ),
-        ],
       ),
       body: pageList.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -167,50 +93,6 @@ class _BodyState extends State<Body> {
         selectedItemColor: kTextColor,
         onTap: _onItemTapped,
       ),
-
-
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () async {
-    //       if (_selectedIndex == 0) {
-    //         // add new group
-    //         var data = jsonEncode({
-    //           "group": "group",
-    //         });
-    //         final response =
-    //             await http.post(Uri.parse('http://' + hostAndPort + '/groups'),
-    //                 headers: <String, String>{
-    //                   "Content-Type": "application/json; charset=UTF-8",
-    //                 },
-    //                 body: data);
-    //
-    //         print(response.statusCode);
-    //         print(response.body);
-    //
-    //         if (response.statusCode == 200) {
-    //           setState(() {
-    //
-    //           });
-    //         } else {
-    //
-    //         }
-    //       } else if (_selectedIndex == 1) {
-    //         // add new discipline
-    //       } else if (_selectedIndex == 2) {
-    //         // add new student
-    //       } else if (_selectedIndex == 3) {
-    //         // add new teacher
-    //       } else if (_selectedIndex == 4) {
-    //         // add new schedule
-    //       }
-    //     },
-    //     backgroundColor: kPrimaryColor,
-    //     child: SvgPicture.asset(
-    //       "assets/icons/Plus Icon.svg",
-    //       color: kTextColor,
-    //       height: getProportionateScreenHeight(25),
-    //     ),
-    //   ),
-    //   floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
