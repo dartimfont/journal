@@ -89,7 +89,12 @@ class _GroupListState extends State<GroupList> {
                       );
 
                      // print(globals_admin.groups[index].group);
-
+                      globals_admin.groups.clear();
+                      fetchJson().then((value) {
+                        setState(() {
+                          globals_admin.groups.addAll(value);
+                        });
+                      });
                     },
                     icon: SvgPicture.asset(
                       "assets/icons/Edit.svg",
@@ -99,7 +104,6 @@ class _GroupListState extends State<GroupList> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      print(globals_admin.groups[index].group);
                       var data = jsonEncode({
                         "group": globals_admin.groups[index].group,
                       });

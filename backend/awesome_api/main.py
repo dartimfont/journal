@@ -13,6 +13,17 @@ class LoginItem(BaseModel):
     password: str
 
 
+class LoginAndGroupItem(BaseModel):
+    login: str
+    group: str
+
+
+class LoginAndGroupAndDisciplineItem(BaseModel):
+    login: str
+    group: str
+    discipline: str
+
+
 class GroupItem(BaseModel):
     group: str
 
@@ -62,6 +73,19 @@ class SelectedLabsItem(BaseModel):
     id_student: int
 
 
+class ScheduleLabsItem(BaseModel):
+    login: str
+    id_group: int
+    id_discipline: int
+    lab: str
+
+
+class LabAchieveItem(BaseModel):
+    id_student: int
+    id_lab: int
+    achieve: bool
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -96,6 +120,27 @@ async def groups(response: Response):
         GROUP BY id_group, \"group\"
         ORDER BY \"group\"
         """)
+    data = cur.fetchall()
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": "groups not found"}
+
+
+# get groups for teacher
+@app.post('/groups_get_for_teacher')
+async def groups_get_for_teacher(item: LoginItem, response: Response):
+    cur.execute("""
+        SELECT groups.id_group, groups.group
+        FROM teachers 
+        JOIN schedule ON schedule.id_teacher = teachers.id_teacher
+        JOIN \"groups\" ON groups.id_group = schedule.id_group
+        GROUP BY groups.id_group, \"group\", teachers.login
+        HAVING teachers.login = '{0}'
+        ORDER BY \"group\" ASC
+        """.format(item.login))
     data = cur.fetchall()
     if len(data) > 0:
         print(data)
@@ -141,7 +186,7 @@ async def groups(item: GroupItemWithId, response: Response):
     if len(data) == 0:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "Group with that ID does not exist!"}
-    else:
+    elif len(data) == 1:
         try:
             cur.execute(
                 "UPDATE \"groups\" SET \"group\"='{0}' WHERE id_group='{1}'".format(item.group, item.id_group))
@@ -164,6 +209,28 @@ async def disciplines():
         return {"error": "disciplines not found"}
 
 
+# get disciplines for teacher
+@app.post('/disciplines_get_for_teacher')
+async def disciplines_get_for_teacher(item: LoginAndGroupItem, response: Response):
+    cur.execute("""
+        SELECT disciplines.id_discipline, disciplines.discipline
+        FROM teachers 
+        JOIN schedule ON schedule.id_teacher = teachers.id_teacher
+        JOIN \"groups\" ON groups.id_group = schedule.id_group
+        JOIN disciplines ON disciplines.id_discipline = schedule.id_discipline
+        GROUP BY disciplines.id_discipline, discipline, teachers.login, groups.group
+        HAVING teachers.login = '{0}' AND groups.group = '{1}'
+        ORDER BY discipline ASC
+        """.format(item.login, item.group))
+    data = cur.fetchall()
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": "disciplines not found"}
+
+
 @app.post('/disciplines')
 async def disciplines(item: DisciplineItem, response: Response):
     cur.execute("SELECT \"discipline\" FROM \"disciplines\" WHERE \"discipline\"='{0}'".format(item.discipline))
@@ -173,7 +240,7 @@ async def disciplines(item: DisciplineItem, response: Response):
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "Such discipline is already taken!"}
     else:
-        cur.execute("INSERT INTO disciplines VALUES('%s')" % (item.discipline,))
+        cur.execute("INSERT INTO disciplines(discipline) VALUES('{0}')".format(item.discipline))
         conn.commit()
         return {"message": "ok"}
 
@@ -289,6 +356,123 @@ async def selected_labs(item: SelectedLabsItem, response: Response):
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
         return {"error": "Such labs does not exist"}
+
+
+# get labs for teacher
+@app.post('/labs_get_for_teacher')
+async def labs_get_for_teacher(item: LoginAndGroupAndDisciplineItem, response: Response):
+    cur.execute("""
+        SELECT labs_for_schedule.id_lab, labs.lab
+        FROM teachers 
+        JOIN schedule ON schedule.id_teacher = teachers.id_teacher
+        JOIN \"groups\" ON groups.id_group = schedule.id_group
+        JOIN disciplines ON disciplines.id_discipline = schedule.id_discipline
+        JOIN labs_for_schedule ON labs_for_schedule.id_schedule = schedule.id_schedule
+        JOIN labs ON labs.id_lab = labs_for_schedule.id_lab
+        GROUP BY labs_for_schedule.id_lab, discipline, teachers.login, groups.group, labs.id_lab
+        HAVING teachers.login = '{0}' AND groups.group = '{1}' AND disciplines.discipline = '{2}'
+        ORDER BY discipline ASC
+        """.format(item.login, item.group, item.discipline))
+    data = cur.fetchall()
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": "disciplines not found"}
+
+
+# update labs achieve
+@app.put('/labs_achieve')
+async def labs_achieve(item: LabAchieveItem, response: Response):
+    cur.execute("""
+        SELECT id_student, id_lab 
+        FROM labs_for_student
+        """)
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "labs with that ID does not exist!"}
+    else:
+        try:
+            cur.execute("""
+            UPDATE labs_for_student SET achieve='{0}' 
+            WHERE id_student ='{1}' AND id_lab = '{2}'
+            """.format(item.achieve, item.id_student, item.id_lab))
+        except Exception as err:
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "ok"}
+
+
+# add lab by schedule
+@app.post('/labs_for_schedule')
+async def labs_for_schedule(item: ScheduleLabsItem, response: Response):
+    cur.execute("""
+        SELECT lab 
+        FROM labs
+        WHERE lab = '{0}'
+        """.format(item.lab))
+    data = cur.fetchall()
+    if len(data) > 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Such lab is already taken!"}
+    else:
+        try:
+            cur.execute("""
+            INSERT INTO labs(lab) VALUES('{0}');
+            INSERT INTO labs_for_schedule
+            SELECT id_schedule, id_lab
+            FROM schedule
+            JOIN labs ON labs.lab = '{0}'
+            JOIN teachers ON teachers.id_teacher = schedule.id_teacher
+            GROUP BY id_schedule, id_lab, login
+            HAVING login = '{1}' AND id_group = '{2}' AND id_discipline = '{3}';
+            """.format(item.lab, item.login, item.id_group, item.id_discipline))
+
+        except Exception as err:
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "ok"}
+
+
+# delete lab
+@app.delete('/labs')
+async def labs(item: LabItem, response: Response):
+    cur.execute("SELECT id_lab FROM \"labs\" WHERE \"id_lab\"='{0}'".format(item.id_lab))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Such lab does not exist!"}
+    else:
+        cur.execute("DELETE FROM \"labs\" WHERE \"id_lab\"='{0}'".format(item.id_lab))
+        conn.commit()
+        return {"message": "ok"}
+
+
+# update lab
+@app.put('/labs')
+async def labs(item: LabItem, response: Response):
+    cur.execute("SELECT \"id_lab\" FROM \"labs\" WHERE \"id_lab\"='{0}'".format(item.id_lab))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "lab with that ID does not exist!"}
+    else:
+        try:
+            cur.execute("UPDATE labs SET  lab='%s' WHERE id_lab=%d" %
+                        (item.lab, item.id_lab))
+        except Exception as err:
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "ok"}
+
 
 @app.post('/logins')
 async def logins(item: LoginItem, response: Response):
@@ -495,23 +679,7 @@ async def labs(item: LabItem, response: Response):
     return {"message": "ok"}
 
 
-@app.put('/labs')
-async def labs(item: LabItem, response: Response):
-    cur.execute("SELECT \"id_lab\" FROM \"labs\" WHERE \"id_lab\"='{0}'".format(item.id_lab))
-    data = cur.fetchall()
-    print(data)
-    if len(data) == 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "lab with that ID does not exist!"}
-    else:
-        try:
-            cur.execute("UPDATE labs SET  lab='%s' WHERE id_lab=%d" %
-                        (item.lab, item.id_lab))
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
-        return {"message": "ok"}
+
 
 
 @app.put('/lab')
@@ -554,20 +722,6 @@ async def by_group(item: GroupItem):
         return {"labs": data}
     else:
         return {"error": "group not found"}
-
-
-@app.delete('/labs')
-async def labs(item: LabItem, response: Response):
-    cur.execute("SELECT \"lab\" FROM \"labs\" WHERE \"lab\"='{0}'".format(item.lab))
-    data = cur.fetchall()
-    print(data)
-    if len(data) == 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such lab does not exist!"}
-    else:
-        cur.execute("DELETE FROM \"labs\" WHERE \"lab\"='{0}'".format(item.lab))
-        conn.commit()
-        return {"message": "ok"}
 
 
 @app.get('/labs')

@@ -26,7 +26,6 @@ class _BodyState extends State<Body> {
     StudentList(),
     DisciplineList(),
     DisciplineList(),
-    //StudentList(),
   ];
 
 
@@ -35,24 +34,6 @@ class _BodyState extends State<Body> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  Future<List<Group>> fetchJsonGroups() async {
-    dynamic response = await http.get(
-        Uri.parse("http://" + hostAndPort + "/groups"),
-        headers: {
-          "accept": "application/json; charset=UTF-8",
-        }
-    );
-
-    List<Group> groupList = [];
-    if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
-      for (dynamic jsonData in urlJson) {
-        groupList.add(Group.fromJson(jsonData));
-      }
-    }
-    return groupList;
   }
 
   void addGroup() async {
@@ -74,19 +55,34 @@ class _BodyState extends State<Body> {
     print(jsonDecode(response.body));
 
     if (status == 200) {
-      globals_admin.groups.clear();
-      fetchJsonGroups().then((value) {
-        setState(() {
-          globals_admin.groups.addAll(value);
-        });
-      });
-
     } else {
       buildShowDialog(context, responseBody);
     }
   }
 
+  void addDiscipline() async {
+    var data = jsonEncode({
+      "discipline": "discipline",
+    });
 
+    final response = await http.post(
+        Uri.parse('http://' + hostAndPort + '/disciplines'),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: data
+    );
+
+    int status = response.statusCode;
+    dynamic responseBody = jsonDecode(response.body);
+    print(response.statusCode);
+    print(jsonDecode(response.body));
+
+    if (status == 200) {
+    } else {
+      buildShowDialog(context, responseBody);
+    }
+  }
 
   void addSomthing(){
     setState(() {
@@ -95,6 +91,7 @@ class _BodyState extends State<Body> {
         addGroup();
       } else if (_selectedIndex == 1) {
         print(_selectedIndex);
+        addDiscipline();
       } else if (_selectedIndex == 2) {
         print(_selectedIndex);
       } else if (_selectedIndex == 3) {

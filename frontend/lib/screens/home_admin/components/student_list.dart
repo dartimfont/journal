@@ -84,7 +84,7 @@ class _StudentListState extends State<StudentList> {
                   SizedBox(width: SizeConfig.screenWidth * 0.04),
                   Expanded(child: Text(
                     _students[index].surname,
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 20),
                   )),
                   IconButton(
                     onPressed: () {},
@@ -96,7 +96,7 @@ class _StudentListState extends State<StudentList> {
                   ),
                   Expanded(child: Text(
                     _students[index].name,
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 20),
                   )),
                   IconButton(
                     onPressed: () {},

@@ -7,6 +7,7 @@ import 'group_list.dart';
 import 'discipline_list.dart';
 import 'student_list.dart';
 import 'achievement_list.dart';
+import 'lab_list.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class _BodyState extends State<Body> {
       } else if (_selectedIndex == 1) {
         onSelect = DisciplineList();
       } else if (_selectedIndex == 2) {
-        onSelect = DisciplineList();
+        onSelect = LabList();
       } else if (_selectedIndex == 3) {
         onSelect = StudentList();
       } else if (_selectedIndex == 4) {
@@ -61,7 +62,7 @@ class _BodyState extends State<Body> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              "assets/icons/discipline.svg",
+              "assets/icons/Lab.svg",
               color: kTextColor,
               height: getProportionateScreenHeight(25),
             ),

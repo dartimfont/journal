@@ -7,13 +7,12 @@ import 'package:journal/components/default_button.dart';
 import 'package:journal/components/error_message.dart';
 import 'package:journal/components/form_error.dart';
 import 'package:journal/constants.dart';
-import 'package:journal/screens/forgot_password/forgot_password_screen.dart';
 import 'package:journal/screens/home_admin/home_admin.dart';
-import 'package:journal/screens/home_admin_test/home_admin_test.dart';
 import 'package:journal/screens/home_teacher/home_teacher.dart';
 import 'package:journal/size_config.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:journal/screens/home_teacher/components/globals_teacher.dart' as globals_teacher;
 
 class SignForm extends StatefulWidget {
   @override
@@ -85,6 +84,7 @@ class _SignFormState extends State<SignForm> {
                   if (responseBody["role"] == "admin") {
                     Navigator.pushNamed(context, HomeAdminScreen.routeName);
                   } else if (responseBody["role"] == "teacher") {
+                    globals_teacher.login = login;
                     Navigator.pushNamed(context, HomeTeacherScreen.routeName);
                   }
                 } else if (status == 403) {

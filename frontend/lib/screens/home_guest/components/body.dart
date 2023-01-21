@@ -8,26 +8,27 @@ import 'discipline_list.dart';
 import 'student_list.dart';
 import 'achievement_list.dart';
 
+import 'globals_student.dart' as globals_student;
+
 class Body extends StatefulWidget {
   @override
   _BodyState createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> {
-  int _selectedIndex = 0;
   dynamic onSelect = GroupList();
 
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
-      if (_selectedIndex == 0) {
+      globals_student.page_index = index;
+      if (globals_student.page_index == 0) {
         onSelect = GroupList();
-      } else if (_selectedIndex == 1) {
+      } else if (globals_student.page_index == 1) {
         onSelect = DisciplineList();
-      } else if (_selectedIndex == 2) {
+      } else if (globals_student.page_index == 2) {
         onSelect = StudentList();
-      } else if (_selectedIndex == 3) {
+      } else if (globals_student.page_index == 3) {
         onSelect = AchievementList();
       }
     });
@@ -76,7 +77,7 @@ class _BodyState extends State<Body> {
             backgroundColor: kPrimaryColor,
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: globals_student.page_index,
         selectedItemColor: kTextColor,
         onTap: _onItemTapped,
       ),

@@ -122,3 +122,9 @@ CREATE TABLE IF NOT EXISTS labs_for_student (
 
 
 --UPDATE groups SET "group"='group2' WHERE id_group=17
+
+SELECT id_schedule, id_lab
+FROM schedule
+JOIN labs ON labs.lab = 'lab'
+GROUP BY id_schedule, id_lab
+HAVING id_teacher = 1 AND id_group = 2 AND id_discipline = 1;
