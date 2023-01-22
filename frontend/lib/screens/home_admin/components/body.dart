@@ -72,7 +72,7 @@ class _BodyState extends State<Body> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              "assets/icons/achievement.svg",
+              "assets/icons/Teacher.svg",
               color: kTextColor,
               height: getProportionateScreenHeight(25),
             ),
@@ -81,7 +81,7 @@ class _BodyState extends State<Body> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              "assets/icons/achievement.svg",
+              "assets/icons/Schedule.svg",
               color: kTextColor,
               height: getProportionateScreenHeight(25),
             ),

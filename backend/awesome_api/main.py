@@ -48,9 +48,9 @@ class StudentID(BaseModel):
 
 class StudentItem(BaseModel):
     id_student: int
-    group: str
-    name: str
+    id_group: int
     surname: str
+    name: str
 
 
 class ScheduleItem(BaseModel):
@@ -311,40 +311,37 @@ async def students_get(item: GroupItem, response: Response):
 
 @app.post('/students')
 async def students(item: StudentItem, response: Response):
-    cur.execute("SELECT \"id_student\" FROM \"students\" WHERE \"id_student\"='{0}'".format(item.id_student))
-    data = cur.fetchall()
-    print(data)
-    if len(data) > 0:
+    try:
+        cur.execute("""
+            INSERT INTO students(id_group, surname, name) 
+            VALUES('{0}','{1}','{2}')
+            """.format(item.id_group, item.surname, item.name))
+
+    except Exception as err:
         response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such student is already taken!"}
-    else:
-        try:
-            cur.execute("INSERT INTO students VALUES(%d, '%s', '%s', '%s')" % (
-                item.id_student, item.name, item.group, item.surname))
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
+        conn.rollback()
+        return {"error": "%s" % err}
+    conn.commit()
     return {"message": "ok"}
 
 
 @app.delete('/students')
 async def students(item: StudentItem, response: Response):
-    cur.execute("SELECT \"student\" FROM \"students\" WHERE \"student\"='{0}'".format(item.id_student))
+    cur.execute("SELECT id_student FROM students WHERE id_student='{0}'".format(item.id_student))
     data = cur.fetchall()
     print(data)
     if len(data) == 0:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "Such student does not exist!"}
     else:
-        cur.execute("DELETE FROM \"students\" WHERE \"student\"='{0}'".format(item.id_student))
+        cur.execute("DELETE FROM students WHERE id_student='{0}'".format(item.id_student))
         conn.commit()
         return {"message": "ok"}
 
 
 @app.put('/students')
 async def students(item: StudentItem, response: Response):
-    cur.execute("SELECT \"id_student\" FROM \"students\" WHERE \"id_student\"='{0}'".format(item.id_student))
+    cur.execute("SELECT id_student FROM students WHERE id_student='{0}'".format(item.id_student))
     data = cur.fetchall()
     print(data)
     if len(data) == 0:
@@ -352,10 +349,13 @@ async def students(item: StudentItem, response: Response):
         return {"error": "student with that ID does not exist!"}
     else:
         try:
-            cur.execute(
-                "UPDATE students SET id_student=%d, \"group\"='%s', name='%s', surname='%s' WHERE id_student=%d" %
-                (item.id_student, item.group, item.name, item.surname, item.id_student))
+            cur.execute("""UPDATE students 
+                SET surname='{1}', name='{2}' 
+                WHERE id_student='{0}'
+                """.format(item.id_student, item.surname, item.name))
+
         except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
             conn.rollback()
             return {"error": "%s" % err}
         conn.commit()
@@ -440,33 +440,28 @@ async def labs_achieve(item: LabAchieveItem, response: Response):
 # add lab by schedule
 @app.post('/labs_for_schedule')
 async def labs_for_schedule(item: ScheduleLabsItem, response: Response):
-    cur.execute("""
-        SELECT lab 
-        FROM labs
-        WHERE lab = '{0}'
-        """.format(item.lab))
-    data = cur.fetchall()
-    if len(data) > 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such lab is already taken!"}
-    else:
-        try:
-            cur.execute("""
-            INSERT INTO labs(lab) VALUES('{0}');
+    try:
+        cur.execute("""
+            INSERT INTO labs(lab) VALUES('{0}')
+            RETURNING id_lab
+            """.format(item.lab))
+        cur.execute("""
             INSERT INTO labs_for_schedule
             SELECT id_schedule, id_lab
             FROM schedule
-            JOIN labs ON labs.lab = '{0}'
+            JOIN labs ON labs.id_lab > 0
             JOIN teachers ON teachers.id_teacher = schedule.id_teacher
             GROUP BY id_schedule, id_lab, login
-            HAVING login = '{1}' AND id_group = '{2}' AND id_discipline = '{3}';
+            HAVING login = '{1}' AND id_group = '{2}' AND id_discipline = '{3}'
+            AND lab = '{0}' AND id_lab NOT IN (SELECT id_lab FROM labs_for_schedule);
             """.format(item.lab, item.login, item.id_group, item.id_discipline))
 
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
-        return {"message": "ok"}
+    except Exception as err:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        conn.rollback()
+        return {"error": "%s" % err}
+    conn.commit()
+    return {"message": "ok"}
 
 
 # delete lab
@@ -504,6 +499,7 @@ async def labs(item: LabItem, response: Response):
         return {"message": "ok"}
 
 
+# Logins
 @app.post('/logins')
 async def logins(item: LoginItem, response: Response):
     cur.execute("""
@@ -570,6 +566,7 @@ async def logins(item: LoginItem, response: Response):
         return {"message": "ok"}
 
 
+# Teachers
 @app.delete('/teachers')
 async def teachers(item: TeacherItem, response: Response):
     cur.execute("SELECT \"teacher\" FROM \"teachers\" WHERE \"teacher\"='{0}'".format(item.id_teacher))
@@ -712,6 +709,7 @@ async def labs(item: LabItem, response: Response):
 
 
 
+"""
 @app.put('/lab')
 async def by_student(item: StudentID):
     cur.execute("SELECT id_student FROM students WHERE id_student='%d'" % item.id_student)
@@ -763,3 +761,4 @@ async def labs():
         return {"labs": data}
     else:
         return {"error": "labs not found"}
+"""
