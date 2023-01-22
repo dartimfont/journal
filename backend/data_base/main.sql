@@ -120,27 +120,3 @@ CREATE TABLE IF NOT EXISTS labs_for_student (
     CONSTRAINT pk_id_student_id_lab PRIMARY KEY (id_student, id_lab)
 );
 
-
---UPDATE groups SET "group"='group2' WHERE id_group=17
-
-INSERT INTO labs(lab) VALUES('lab')
-    RETURNING id_lab;
-
-INSERT INTO labs(lab) VALUES('lab') RETURNING id_lab;
-
-INSERT INTO labs_for_schedule(id_schedule);
-
-
-SELECT id_schedule, id_lab
-FROM schedule, labs
-WHERE id_schedule = 1 AND lab = 'lab' AND id_lab NOT IN (SELECT id_lab FROM labs_for_schedule)
-
-
-
-SELECT id_schedule, id_lab
-        FROM schedule
-        JOIN labs ON labs.id_lab > 0
-        JOIN teachers ON teachers.id_teacher = schedule.id_teacher
-        GROUP BY id_schedule, id_lab, login, labs.lab
-        HAVING login = 'test_teacher' AND id_group = '{2}' AND id_discipline = '{3}'
-        AND labs.lab = '{0}' AND id_lab NOT IN (SELECT id_lab FROM labs_for_schedule);

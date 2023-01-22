@@ -1,17 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:journal/constants.dart';
-import 'package:journal/globals.dart';
-import 'package:journal/screens/home_admin/components/discipline_list.dart';
-import 'package:journal/screens/home_admin/components/student_list.dart';
 import 'package:journal/size_config.dart';
 
-import 'package:journal/components/error_message.dart';
 import 'group_list.dart';
-import 'package:http/http.dart' as http;
-
-import 'globals_admin.dart' as globals_admin;
+import 'discipline_list.dart';
+import 'student_list.dart';
+import 'teacher_list.dart';
+import 'schedule_list.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -24,8 +20,8 @@ class _BodyState extends State<Body> {
     GroupList(),
     DisciplineList(),
     StudentList(),
-    DisciplineList(),
-    DisciplineList(),
+    TeacherList(),
+    ScheduleList(),
   ];
 
   void _onItemTapped(int index) {

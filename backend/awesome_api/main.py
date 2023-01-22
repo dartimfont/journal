@@ -63,8 +63,20 @@ class ScheduleItem(BaseModel):
 class TeacherItem(BaseModel):
     id_teacher: int
     login: str
-    name: str
     surname: str
+    name: str
+
+
+class TeacherItemWithPassword(BaseModel):
+    login: str
+    password: str
+    surname: str
+    name: str
+
+
+class UpdateLoginItem(BaseModel):
+    oldLogin: str
+    newLogin: str
 
 
 class LabItem(BaseModel):
@@ -518,7 +530,7 @@ async def logins(item: LoginItem, response: Response):
 
 @app.delete('/logins')
 async def logins(item: LoginItem, response: Response):
-    cur.execute("SELECT role FROM logins WHERE login=%s" % item.login)
+    cur.execute("SELECT login FROM logins WHERE login='{0}'".format(item.login))
     data = cur.fetchall()
     if len(data) == 0:
         response.status_code = status.HTTP_400_BAD_REQUEST
@@ -539,7 +551,11 @@ async def logins(item: LoginItem, response: Response):
         return {"error": "Such login is already taken!"}
     else:
         try:
-            cur.execute("INSERT INTO logins VALUES ('%s', '%s', '%s')" % (item.login, item.role, item.password))
+            cur.execute("""
+            INSERT INTO logins 
+            VALUES ('%s', '%s', '%s')
+            """.format(item.login, item.role, item.password))
+
         except Exception as err:
             conn.rollback()
             return {"error": "%s" % err}
@@ -557,9 +573,14 @@ async def logins(item: LoginItem, response: Response):
         return {"error": "login with that ID does not exist!"}
     else:
         try:
-            cur.execute("UPDATE logins SET  role='%s', password='%s' WHERE login='%s'" %
-                        (item.role, item.password, item.login))
+            cur.execute("""
+                UPDATE logins 
+                SET password='{0}' 
+                WHERE login='{1}'
+                """.format(item.password, item.login))
+
         except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
             conn.rollback()
             return {"error": "%s" % err}
         conn.commit()
@@ -567,6 +588,104 @@ async def logins(item: LoginItem, response: Response):
 
 
 # Teachers
+@app.get('/teachers')
+async def teachers():
+    cur.execute("SELECT * FROM teachers ORDER BY name, surname")
+    data = cur.fetchall()
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        return {"error": "teachers not found"}
+
+
+@app.put('/teachers')
+async def teachers(item: TeacherItem, response: Response):
+    cur.execute("SELECT \"id_teacher\" FROM \"teachers\" WHERE \"id_teacher\"='{0}'".format(item.id_teacher))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Teacher with that ID does not exist!"}
+    else:
+        try:
+            cur.execute("""
+            UPDATE teachers 
+            SET surname='{1}', name='{2}' 
+            WHERE id_teacher='{0}'
+            """.format(item.id_teacher, item.surname, item.name))
+
+        except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "ok"}
+
+
+@app.put('/teachers_login')
+async def teachers_login(item: UpdateLoginItem, response: Response):
+    cur.execute("SELECT login FROM logins WHERE login='{0}'".format(item.oldLogin))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Teacher with that ID does not exist!"}
+    else:
+        try:
+            cur.execute("""
+                UPDATE logins 
+                SET login='{0}' 
+                WHERE login='{1}'
+                """.format(item.newLogin, item.oldLogin))
+
+        except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "ok"}
+
+
+@app.post('/teachers')
+async def teachers(item: TeacherItemWithPassword, response: Response):
+    cur.execute("SELECT login FROM logins WHERE login='{0}'".format(item.login))
+    data = cur.fetchall()
+    print(data)
+    if len(data) > 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Such login for teacher is already taken!"}
+    else:
+        try:
+            cur.execute("""
+                INSERT INTO logins VALUES('{0}', \'teacher\', '{1}')
+                """.format(item.login, item.password))
+
+            cur.execute("""
+                INSERT INTO teachers(login, name, surname) 
+                VALUES('{0}', '{1}', '{2}')
+                """.format(item.login, item.name, item.surname))
+
+        except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "ok"}
+
+
+# Schedule
+
+
+
+
+
+
+
+
+
+
+
 @app.delete('/teachers')
 async def teachers(item: TeacherItem, response: Response):
     cur.execute("SELECT \"teacher\" FROM \"teachers\" WHERE \"teacher\"='{0}'".format(item.id_teacher))
@@ -595,25 +714,6 @@ async def schedules(item: ScheduleItem, response: Response):
         return {"message": "ok"}
 
 
-@app.post('/teachers')
-async def teachers(item: TeacherItem, response: Response):
-    cur.execute("SELECT \"id_teacher\" FROM \"teachers\" WHERE \"id_teacher\"='{0}'".format(item.id_teacher))
-    data = cur.fetchall()
-    print(data)
-    if len(data) > 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such teacher is already taken!"}
-    else:
-        try:
-            cur.execute("INSERT INTO teachers VALUES ( %d, '%s', '%s', '%s')" % (
-                item.id_teacher, item.login, item.name, item.surname))
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
-        return {"message": "ok"}
-
-
 @app.put('/schedules')
 async def schedules(item: ScheduleItem, response: Response):
     cur.execute("SELECT \"id_schedule\" FROM \"schedules\" WHERE \"id_schedule\"='{0}'".format(item.id_schedule))
@@ -627,25 +727,6 @@ async def schedules(item: ScheduleItem, response: Response):
             cur.execute(
                 "UPDATE schedules SET id_schedule=%d, \"group\"='%s', id_teacher='%s', discipline='%s' WHERE id_schedule=%d" %
                 (item.id_schedule, item.group, item.id_teacher, item.discipline, item.id_schedule))
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
-        return {"message": "ok"}
-
-
-@app.put('/teachers')
-async def teachers(item: TeacherItem, response: Response):
-    cur.execute("SELECT \"id_teacher\" FROM \"teachers\" WHERE \"id_teacher\"='{0}'".format(item.id_teacher))
-    data = cur.fetchall()
-    print(data)
-    if len(data) == 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Teacher with that ID does not exist!"}
-    else:
-        try:
-            cur.execute("UPDATE teachers SET id_teacher=%d, login='%s', name='%s', surname='%s' WHERE id_teacher=%d" %
-                        (item.id_teacher, item.login, item.name, item.surname, item.id_teacher))
         except Exception as err:
             conn.rollback()
             return {"error": "%s" % err}
@@ -668,16 +749,6 @@ async def schedules(item: ScheduleItem, response: Response):
         conn.commit()
     return {"message": "ok"}
 
-
-@app.get('/teachers')
-async def teachers():
-    cur.execute("SELECT * FROM teachers")
-    data = cur.fetchall()
-    if len(data) > 0:
-        print(data)
-        return {"teachers": data}
-    else:
-        return {"error": "teachers not found"}
 
 
 @app.get('/schedule')

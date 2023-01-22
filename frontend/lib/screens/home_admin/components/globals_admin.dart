@@ -3,8 +3,8 @@ library globals_admin;
 int page_index = 0;
 
 // Teacher
+int selectedIndexInTeachers = -1;
 int id_teacher = -1;
-String teacher = "";
 String login = "";
 
 // Groups

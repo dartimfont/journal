@@ -106,18 +106,11 @@ class _StudentListState extends State<StudentList> {
             SizedBox(width: SizeConfig.screenWidth * 0.04),
             Expanded(
               child: Text(
-                "Surname",
+                "Surname, Name",
                 style: TextStyle(fontSize: 22),
               ),
             ),
             SizedBox(width: SizeConfig.screenWidth * 0.04),
-            Expanded(
-              child: Text(
-                "Name",
-                style: TextStyle(fontSize: 22),
-              ),
-            ),
-            SizedBox(width: SizeConfig.screenWidth * 0.2),
           ],
         ),
         Expanded(
