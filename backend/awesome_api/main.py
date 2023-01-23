@@ -541,28 +541,6 @@ async def logins(item: LoginItem, response: Response):
         return {"message": "ok"}
 
 
-@app.post('/logins')
-async def logins(item: LoginItem, response: Response):
-    cur.execute("SELECT \"login\" FROM \"logins\" WHERE \"login\"='{0}'".format(item.login))
-    data = cur.fetchall()
-    print(data)
-    if len(data) > 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such login is already taken!"}
-    else:
-        try:
-            cur.execute("""
-            INSERT INTO logins 
-            VALUES ('%s', '%s', '%s')
-            """.format(item.login, item.role, item.password))
-
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
-        return {"message": "ok"}
-
-
 @app.put('/logins')
 async def logins(item: LoginItem, response: Response):
     cur.execute("SELECT \"login\" FROM \"logins\" WHERE \"login\"='{0}'".format(item.login))
@@ -675,6 +653,23 @@ async def teachers(item: TeacherItemWithPassword, response: Response):
 
 
 # Schedule
+@app.get('/schedules')
+async def schedules():
+    cur.execute("""
+        SELECT surname, name, \"group\", discipline
+        FROM schedule
+        JOIN teachers ON teachers.id_teacher = schedule.id_teacher
+        JOIN disciplines ON disciplines.id_discipline = schedule.id_discipline
+        JOIN \"groups\" ON groups.id_group = schedule.id_group
+        """)
+    data = cur.fetchall()
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        return {"error": "schedule not found"}
+
+
 
 
 

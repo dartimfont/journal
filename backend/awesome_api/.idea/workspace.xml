@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2790d23f-410c-4963-bfc9-a3c11716a739" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/teacher_list.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/edit_schedule/component/body.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../frontend/lib/screens/edit_schedule/edit_schedule.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../data_base/main.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../data_base/main.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/lib/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/constants.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/body.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/body.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/student_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/student_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/schedule_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/lib/screens/home_admin/components/schedule_list.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
