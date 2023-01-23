@@ -2,6 +2,10 @@ library globals_admin;
 
 int page_index = 0;
 
+// Schedule
+bool add_schedule = false;
+int id_schedule = -1;
+
 // Teacher
 int selectedIndexInTeachers = -1;
 int id_teacher = -1;

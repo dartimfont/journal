@@ -56,8 +56,8 @@ class StudentItem(BaseModel):
 class ScheduleItem(BaseModel):
     id_schedule: int
     id_teacher: int
-    group: str
-    discipline: str
+    id_group: int
+    id_discipline: int
 
 
 class TeacherItem(BaseModel):
@@ -656,7 +656,7 @@ async def teachers(item: TeacherItemWithPassword, response: Response):
 @app.get('/schedules')
 async def schedules():
     cur.execute("""
-        SELECT surname, name, \"group\", discipline
+        SELECT id_schedule, surname, name, \"group\", discipline
         FROM schedule
         JOIN teachers ON teachers.id_teacher = schedule.id_teacher
         JOIN disciplines ON disciplines.id_discipline = schedule.id_discipline
@@ -670,8 +670,62 @@ async def schedules():
         return {"error": "schedule not found"}
 
 
+@app.put('/schedules')
+async def schedules(item: ScheduleItem, response: Response):
+    cur.execute("SELECT \"id_schedule\" FROM \"schedule\" WHERE \"id_schedule\"='{0}'".format(item.id_schedule))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "schedule with that ID does not exist!"}
+    else:
+        try:
+            cur.execute("""
+                UPDATE schedule 
+                SET id_schedule='{0}', id_teacher='{1}', id_group='{2}', id_discipline='{3}' 
+                WHERE id_schedule='{0}'
+                """.format(item.id_schedule, item.id_teacher, item.id_group, item.id_discipline))
+        except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "Schedule updated"}
 
 
+@app.post('/schedules')
+async def schedules(item: ScheduleItem, response: Response):
+    cur.execute("SELECT \"id_schedule\" FROM \"schedule\" WHERE \"id_schedule\"='{0}'".format(item.id_schedule))
+    data = cur.fetchall()
+    print(data)
+    if len(data) > 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Such schedule is already taken!"}
+    else:
+        try:
+            cur.execute("""
+                INSERT INTO schedule(id_teacher, id_group, id_discipline) VALUES('{0}', '{1}', '{2}')
+                """.format(item.id_teacher, item.id_group, item.id_discipline))
+        except Exception as err:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            conn.rollback()
+            return {"error": "%s" % err}
+        conn.commit()
+        return {"message": "Schedule added"}
+
+
+@app.delete('/schedules')
+async def schedules(item: ScheduleItem, response: Response):
+    cur.execute("SELECT \"id_schedule\" FROM \"schedule\" WHERE \"id_schedule\"='{0}'".format(item.id_schedule))
+    data = cur.fetchall()
+    print(data)
+    if len(data) == 0:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Such schedule does not exist!"}
+    else:
+        cur.execute("DELETE FROM schedule WHERE id_schedule='{0}'".format(item.id_schedule))
+        conn.commit()
+        return {"message": "ok"}
 
 
 
@@ -695,54 +749,10 @@ async def teachers(item: TeacherItem, response: Response):
         return {"message": "ok"}
 
 
-@app.delete('/schedules')
-async def schedules(item: ScheduleItem, response: Response):
-    cur.execute("SELECT \"schedule\" FROM \"schedules\" WHERE \"schedule\"='{0}'".format(item.id_schedule))
-    data = cur.fetchall()
-    print(data)
-    if len(data) == 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such schedule does not exist!"}
-    else:
-        cur.execute("DELETE FROM \"schedules\" WHERE \"schedule\"='{0}'".format(item.id_schedule))
-        conn.commit()
-        return {"message": "ok"}
 
 
-@app.put('/schedules')
-async def schedules(item: ScheduleItem, response: Response):
-    cur.execute("SELECT \"id_schedule\" FROM \"schedules\" WHERE \"id_schedule\"='{0}'".format(item.id_schedule))
-    data = cur.fetchall()
-    print(data)
-    if len(data) == 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "schedule with that ID does not exist!"}
-    else:
-        try:
-            cur.execute(
-                "UPDATE schedules SET id_schedule=%d, \"group\"='%s', id_teacher='%s', discipline='%s' WHERE id_schedule=%d" %
-                (item.id_schedule, item.group, item.id_teacher, item.discipline, item.id_schedule))
-        except Exception as err:
-            conn.rollback()
-            return {"error": "%s" % err}
-        conn.commit()
-        return {"message": "ok"}
 
 
-@app.post('/schedule')
-async def schedules(item: ScheduleItem, response: Response):
-    cur.execute("SELECT \"id_schedule\" FROM \"schedule\" WHERE \"id_schedule\"='{0}'".format(item.id_schedule))
-    data = cur.fetchall()
-    print(data)
-    if len(data) > 0:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": "Such schedule is already taken!"}
-    else:
-        cur.execute(
-            "INSERT INTO schedules VALUES(%d, %d, '%s', '%s')" % (
-                item.id_schedule, item.id_teacher, item.group, item.discipline))
-        conn.commit()
-    return {"message": "ok"}
 
 
 

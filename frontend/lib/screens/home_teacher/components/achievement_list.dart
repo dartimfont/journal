@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:journal/components/error_message.dart';
+import 'package:journal/components/message.dart';
 import 'package:journal/constants.dart';
 import 'package:journal/size_config.dart';
 

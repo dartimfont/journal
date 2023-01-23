@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:journal/components/error_message.dart';
+import 'package:journal/components/message.dart';
 import 'package:journal/constants.dart';
 
 import 'globals_admin.dart' as globals_admin;
@@ -16,10 +16,10 @@ class TeacherList extends StatefulWidget {
 }
 
 class _TeacherListState extends State<TeacherList> {
-  final List<Student> _teachers = [];
+  final List<Teacher> _teachers = [];
   TextEditingController controller;
 
-  Future<List<Student>> fetchJson() async {
+  Future<List<Teacher>> fetchJson() async {
     dynamic response =
         await http.get(Uri.parse("http://" + hostAndPort + "/teachers"),
             headers: <String, String>{
@@ -30,11 +30,11 @@ class _TeacherListState extends State<TeacherList> {
     dynamic responseBody = jsonDecode(response.body);
     print(status);
     print(responseBody);
-    List<Student> studentList = [];
+    List<Teacher> studentList = [];
     if (status == 200) {
       var urlJson = responseBody;
       for (dynamic jsonData in urlJson) {
-        studentList.add(Student.fromJson(jsonData));
+        studentList.add(Teacher.fromJson(jsonData));
       }
     }
     return studentList;
@@ -456,20 +456,20 @@ class _TeacherListState extends State<TeacherList> {
   }
 }
 
-class Student {
+class Teacher {
   int id_teacher;
   String login;
   String surname;
   String name;
 
-  Student({
+  Teacher({
     @required this.id_teacher,
     @required this.login,
     @required this.surname,
     @required this.name,
   });
 
-  factory Student.fromJson(Map<String, dynamic> json) => Student(
+  factory Teacher.fromJson(Map<String, dynamic> json) => Teacher(
     id_teacher: json["id_teacher"],
     login: json["login"],
     surname: json["surname"],

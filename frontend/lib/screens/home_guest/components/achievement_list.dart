@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:journal/components/error_message.dart';
+import 'package:journal/components/message.dart';
 import 'package:journal/constants.dart';
 
 import 'globals_student.dart' as globals_student;

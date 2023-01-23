@@ -26,3 +26,30 @@ Future<dynamic> buildShowDialog(BuildContext context, responseBody) {
     },
   );
 }
+
+Future<dynamic> buildShowDialogOk(BuildContext context, responseBody) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          "Success!",
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          responseBody["message"],
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}

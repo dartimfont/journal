@@ -4,7 +4,7 @@ import 'package:crypto/crypto.dart';
 
 import 'package:journal/components/custom_suffix_icon.dart';
 import 'package:journal/components/default_button.dart';
-import 'package:journal/components/error_message.dart';
+import 'package:journal/components/message.dart';
 import 'package:journal/components/form_error.dart';
 import 'package:journal/constants.dart';
 import 'package:journal/screens/home_admin/home_admin.dart';

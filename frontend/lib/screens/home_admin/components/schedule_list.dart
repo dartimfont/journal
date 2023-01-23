@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:journal/components/error_message.dart';
+import 'package:journal/components/message.dart';
 import 'package:journal/constants.dart';
 
 import 'package:http/http.dart' as http;
@@ -37,6 +37,7 @@ class _ScheduleListState extends State<ScheduleList> {
 
   @override
   void initState() {
+    _schedules.clear();
     fetchJson().then((value) {
       setState(() {
         _schedules.addAll(value);
@@ -65,38 +66,37 @@ class _ScheduleListState extends State<ScheduleList> {
                 height: getProportionateScreenHeight(22),
               ),
               onPressed: () {
+                globals_admin.add_schedule = true;
                 Navigator.pushNamed(context, EditScheduleScreen.routeName);
               },
             ),
             SizedBox(width: SizeConfig.screenWidth * 0.02),
           ],
         ),
-        Row(
-            children: [
-              SizedBox(width: SizeConfig.screenWidth * 0.02),
-              Expanded(
-                child: Text(
-                  "Teacher",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              SizedBox(width: SizeConfig.screenWidth * 0.02),
-              Expanded(
-                child: Text(
-                  "Group",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              SizedBox(width: SizeConfig.screenWidth * 0.02),
-              Expanded(
-                child: Text(
-                  "Discipline",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              SizedBox(width: SizeConfig.screenWidth * 0.25),
-            ]
-        ),
+        Row(children: [
+          SizedBox(width: SizeConfig.screenWidth * 0.02),
+          Expanded(
+            child: Text(
+              "Teacher",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          SizedBox(width: SizeConfig.screenWidth * 0.02),
+          Expanded(
+            child: Text(
+              "Group",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          SizedBox(width: SizeConfig.screenWidth * 0.02),
+          Expanded(
+            child: Text(
+              "Discipline",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          SizedBox(width: SizeConfig.screenWidth * 0.25),
+        ]),
         Expanded(
           child: ListView.builder(
             itemCount: _schedules.length,
@@ -120,26 +120,30 @@ class _ScheduleListState extends State<ScheduleList> {
                       SizedBox(width: SizeConfig.screenWidth * 0.02),
                       Expanded(
                           child: Text(
-                            _schedules[index].surname + " " +
+                        _schedules[index].surname +
+                            " " +
                             _schedules[index].name,
                         style: TextStyle(fontSize: 20),
                       )),
                       SizedBox(width: SizeConfig.screenWidth * 0.02),
                       Expanded(
                           child: Text(
-                            _schedules[index].group,
-                            style: TextStyle(fontSize: 20),
-                          )),
+                        _schedules[index].group,
+                        style: TextStyle(fontSize: 20),
+                      )),
                       SizedBox(width: SizeConfig.screenWidth * 0.02),
                       Expanded(
                           child: Text(
-                              _schedules[index].discipline,
-                            style: TextStyle(fontSize: 20),
-                          )),
-
+                        _schedules[index].discipline,
+                        style: TextStyle(fontSize: 20),
+                      )),
                       IconButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, EditScheduleScreen.routeName);
+                          globals_admin.id_schedule =
+                              _schedules[index].id_schedule;
+                          globals_admin.add_schedule = false;
+                          Navigator.pushNamed(
+                              context, EditScheduleScreen.routeName);
                         },
                         icon: SvgPicture.asset(
                           "assets/icons/Edit.svg",
@@ -148,8 +152,33 @@ class _ScheduleListState extends State<ScheduleList> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          var data = jsonEncode({
+                            "id_schedule": _schedules[index].id_schedule,
+                            "id_teacher": -1,
+                            "id_group": -1,
+                            "id_discipline": -1,
+                          });
+                          dynamic response = await http.delete(
+                            Uri.parse("http://" + hostAndPort + "/schedules"),
+                            headers: {
+                              "Content-Type": "application/json; charset=UTF-8",
+                            },
+                            body: data,
+                          );
+                          int status = response.statusCode;
+                          dynamic responseBody = jsonDecode(response.body);
+                          print(status);
+                          print(responseBody["message"]);
+                          if (status == 200) {
 
+                          }
+                          _schedules.clear();
+                          fetchJson().then((value) {
+                            setState(() {
+                              _schedules.addAll(value);
+                            });
+                          });
                         },
                         icon: SvgPicture.asset(
                           "assets/icons/Trash.svg",
@@ -185,11 +214,11 @@ class Schedule {
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) => Schedule(
-    id_schedule: json["id_schedule"],
-    surname: json["surname"],
-    name: json["name"],
-    group: json["group"],
-    discipline: json["discipline"],
+        id_schedule: json["id_schedule"],
+        surname: json["surname"],
+        name: json["name"],
+        group: json["group"],
+        discipline: json["discipline"],
       );
 
   Map<String, dynamic> toJson() => {
