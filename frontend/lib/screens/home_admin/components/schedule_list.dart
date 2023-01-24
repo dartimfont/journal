@@ -26,7 +26,7 @@ class _ScheduleListState extends State<ScheduleList> {
     });
     List<Schedule> scheduleList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         print(jsonData);
         scheduleList.add(Schedule.fromJson(jsonData));
@@ -167,7 +167,7 @@ class _ScheduleListState extends State<ScheduleList> {
                             body: data,
                           );
                           int status = response.statusCode;
-                          dynamic responseBody = jsonDecode(response.body);
+                          dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                           print(status);
                           print(responseBody["message"]);
                           if (status == 200) {

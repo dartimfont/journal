@@ -25,11 +25,11 @@ class _DisciplineListState extends State<DisciplineList> {
       'accept': 'application/json; charset=UTF-8',
     });
 
-    print(response.body);
+    print(utf8.decode(response.bodyBytes));
 
     List<Discipline> disciplineList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         print(jsonData);
         disciplineList.add(Discipline.fromJson(jsonData));
@@ -77,7 +77,7 @@ class _DisciplineListState extends State<DisciplineList> {
                   body: data,
                 );
                 int status = response.statusCode;
-                dynamic responseBody = jsonDecode(response.body);
+                dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                 if (response.statusCode == 200) {
                   _disciplines.clear();
                   fetchJson().then((value) {
@@ -158,9 +158,9 @@ class _DisciplineListState extends State<DisciplineList> {
 
                                       int status = response.statusCode;
                                       dynamic responseBody =
-                                      jsonDecode(response.body);
+                                      jsonDecode(utf8.decode(response.bodyBytes));
                                       print(response.statusCode);
-                                      print(jsonDecode(response.body));
+                                      print(jsonDecode(utf8.decode(response.bodyBytes)));
 
                                       if (status == 200) {
                                         _disciplines.clear();
@@ -199,7 +199,7 @@ class _DisciplineListState extends State<DisciplineList> {
                             body: data,
                           );
                           int status = response.statusCode;
-                          dynamic responseBody = jsonDecode(response.body);
+                          dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                           if (response.statusCode == 200) {
                             _disciplines.clear();
                             fetchJson().then((value) {

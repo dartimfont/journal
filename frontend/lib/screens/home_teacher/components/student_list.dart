@@ -26,7 +26,7 @@ class _StudentListState extends State<StudentList> {
             },
             body: params);
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     List<Student> studentList = [];
     if (status == 200) {
       var urlJson = responseBody;

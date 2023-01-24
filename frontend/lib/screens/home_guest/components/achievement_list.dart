@@ -31,7 +31,7 @@ class _AchievementListState extends State<AchievementList> {
             body: params);
 
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     print(status);
     print(responseBody);
 

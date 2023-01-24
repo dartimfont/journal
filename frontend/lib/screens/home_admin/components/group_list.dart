@@ -27,7 +27,7 @@ class _GroupListState extends State<GroupList> {
 
     List<Group> groupList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         groupList.add(Group.fromJson(jsonData));
       }
@@ -75,7 +75,7 @@ class _GroupListState extends State<GroupList> {
                   body: data,
                 );
                 int status = response.statusCode;
-                dynamic responseBody = jsonDecode(response.body);
+                dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                 if (response.statusCode == 200) {
                   _groups.clear();
                   fetchJson().then((value) {
@@ -157,9 +157,9 @@ class _GroupListState extends State<GroupList> {
 
                                       int status = response.statusCode;
                                       dynamic responseBody =
-                                          jsonDecode(response.body);
+                                          jsonDecode(utf8.decode(response.bodyBytes));
                                       print(response.statusCode);
-                                      print(jsonDecode(response.body));
+                                      print(jsonDecode(utf8.decode(response.bodyBytes)));
 
                                       if (status == 200) {
                                         _groups.clear();
@@ -198,7 +198,7 @@ class _GroupListState extends State<GroupList> {
                             body: data,
                           );
                           int status = response.statusCode;
-                          dynamic responseBody = jsonDecode(response.body);
+                          dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                           if (response.statusCode == 200) {
                             _groups.clear();
                             fetchJson().then((value) {

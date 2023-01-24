@@ -27,7 +27,7 @@ class _StudentListState extends State<StudentList> {
             body: params);
 
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     print(status);
     print(responseBody);
 

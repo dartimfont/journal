@@ -23,7 +23,7 @@ class _GroupListState extends State<GroupList> {
       "accept": "application/json; charset=UTF-8",
     });
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
 
     List<Group> groupList = [];
     if (status == 200) {
