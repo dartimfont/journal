@@ -28,7 +28,7 @@ class _StudentListState extends State<StudentList> {
             },
             body: data);
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     print(status);
     print(responseBody);
     List<Student> studentList = [];
@@ -85,7 +85,7 @@ class _StudentListState extends State<StudentList> {
                   body: data,
                 );
                 int status = response.statusCode;
-                dynamic responseBody = jsonDecode(response.body);
+                dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                 if (status == 200) {
                   _students.clear();
                   fetchJson().then((value) {
@@ -180,7 +180,7 @@ class _StudentListState extends State<StudentList> {
                                           body: data);
                                       int status = response.statusCode;
                                       dynamic responseBody =
-                                      jsonDecode(response.body);
+                                      jsonDecode(utf8.decode(response.bodyBytes));
                                       if (status == 200) {
                                         _students.clear();
                                         fetchJson().then((value) {
@@ -248,7 +248,7 @@ class _StudentListState extends State<StudentList> {
                                           body: data);
                                       int status = response.statusCode;
                                       dynamic responseBody =
-                                      jsonDecode(response.body);
+                                      jsonDecode(utf8.decode(response.bodyBytes));
                                       if (status == 200) {
                                         _students.clear();
                                         fetchJson().then((value) {
@@ -287,7 +287,7 @@ class _StudentListState extends State<StudentList> {
                             body: data,
                           );
                           int status = response.statusCode;
-                          dynamic responseBody = jsonDecode(response.body);
+                          dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                           if (status == 200) {
                             _students.clear();
                             fetchJson().then((value) {

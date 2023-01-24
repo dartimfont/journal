@@ -28,10 +28,10 @@ class _AchievementListState extends State<AchievementList> {
             },
             body: params);
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     List<Achiev> alist = [];
     if (status == 200) {
-      var urjson = jsonDecode(response.body);
+      var urjson = jsonDecode(utf8.decode(response.bodyBytes));
       print(urjson);
       for (dynamic jsonData in urjson) {
         alist.add(Achiev.fromJson(jsonData));

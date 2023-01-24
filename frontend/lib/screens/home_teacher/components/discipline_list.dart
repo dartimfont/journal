@@ -30,7 +30,7 @@ class _DisciplineListState extends State<DisciplineList> {
     );
     List<Discipline> disciplineList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         print(jsonData);
         disciplineList.add(Discipline.fromJson(jsonData));

@@ -32,7 +32,7 @@ class _BodyState extends State<Body> {
       },
     );
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     print(status);
     print(responseBody);
     List<Teacher> studentList = [];
@@ -53,7 +53,7 @@ class _BodyState extends State<Body> {
 
     List<Group> groupList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         groupList.add(Group.fromJson(jsonData));
       }
@@ -67,11 +67,11 @@ class _BodyState extends State<Body> {
       'accept': 'application/json; charset=UTF-8',
     });
 
-    print(response.body);
+    print(utf8.decode(response.bodyBytes));
 
     List<Discipline> disciplineList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         print(jsonData);
         disciplineList.add(Discipline.fromJson(jsonData));
@@ -253,7 +253,7 @@ class _BodyState extends State<Body> {
                       body: data,
                     );
                     int status = response.statusCode;
-                    dynamic responseBody = jsonDecode(response.body);
+                    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                     print(status);
                     print(responseBody["message"]);
                     if (status == 200) {
@@ -325,7 +325,7 @@ class _BodyState extends State<Body> {
                       body: data,
                     );
                     int status = response.statusCode;
-                    dynamic responseBody = jsonDecode(response.body);
+                    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                     print(status);
                     print(responseBody["message"]);
                     if (status == 200) {

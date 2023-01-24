@@ -27,7 +27,7 @@ class _TeacherListState extends State<TeacherList> {
             },
         );
     int status = response.statusCode;
-    dynamic responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     print(status);
     print(responseBody);
     List<Teacher> studentList = [];
@@ -84,7 +84,7 @@ class _TeacherListState extends State<TeacherList> {
                   body: data,
                 );
                 int status = response.statusCode;
-                dynamic responseBody = jsonDecode(response.body);
+                dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                 if (status == 200) {
                   _teachers.clear();
                   fetchJson().then((value) {
@@ -181,7 +181,7 @@ class _TeacherListState extends State<TeacherList> {
                                               body: data);
                                           int status = response.statusCode;
                                           dynamic responseBody =
-                                          jsonDecode(response.body);
+                                          jsonDecode(utf8.decode(response.bodyBytes));
                                           if (status == 200) {
                                             _teachers.clear();
                                             fetchJson().then((value) {
@@ -250,7 +250,7 @@ class _TeacherListState extends State<TeacherList> {
                                               body: data);
                                           int status = response.statusCode;
                                           dynamic responseBody =
-                                          jsonDecode(response.body);
+                                          jsonDecode(utf8.decode(response.bodyBytes));
                                           if (status == 200) {
                                             _teachers.clear();
                                             fetchJson().then((value) {
@@ -324,7 +324,7 @@ class _TeacherListState extends State<TeacherList> {
                                               body: data);
                                           int status = response.statusCode;
                                           dynamic responseBody =
-                                          jsonDecode(response.body);
+                                          jsonDecode(utf8.decode(response.bodyBytes));
                                           if (status == 200) {
                                             _teachers.clear();
                                             fetchJson().then((value) {
@@ -386,7 +386,7 @@ class _TeacherListState extends State<TeacherList> {
                                               body: data);
                                           int status = response.statusCode;
                                           dynamic responseBody =
-                                          jsonDecode(response.body);
+                                          jsonDecode(utf8.decode(response.bodyBytes));
                                           if (status == 200) {
                                             _teachers.clear();
                                             fetchJson().then((value) {
@@ -423,7 +423,7 @@ class _TeacherListState extends State<TeacherList> {
                                 body: data,
                               );
                               int status = response.statusCode;
-                              dynamic responseBody = jsonDecode(response.body);
+                              dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                               if (status == 200) {
                                 _teachers.clear();
                                 fetchJson().then((value) {

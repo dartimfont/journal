@@ -34,7 +34,7 @@ class _LabListState extends State<LabList> {
     );
     List<Lab> labList = [];
     if (response.statusCode == 200) {
-      var urlJson = jsonDecode(response.body);
+      var urlJson = jsonDecode(utf8.decode(response.bodyBytes));
       for (dynamic jsonData in urlJson) {
         print(jsonData);
         labList.add(Lab.fromJson(jsonData));
@@ -86,7 +86,7 @@ class _LabListState extends State<LabList> {
                   body: data,
                 );
                 int status = response.statusCode;
-                dynamic responseBody = jsonDecode(response.body);
+                dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                 if (response.statusCode == 200) {
                   _labs.clear();
                   fetchJson().then((value) {
@@ -168,9 +168,9 @@ class _LabListState extends State<LabList> {
 
                                       int status = response.statusCode;
                                       dynamic responseBody =
-                                          jsonDecode(response.body);
+                                          jsonDecode(utf8.decode(response.bodyBytes));
                                       print(response.statusCode);
-                                      print(jsonDecode(response.body));
+                                      print(jsonDecode(utf8.decode(response.bodyBytes)));
 
                                       if (status == 200) {
                                         _labs.clear();
@@ -208,7 +208,7 @@ class _LabListState extends State<LabList> {
                             body: data,
                           );
                           int status = response.statusCode;
-                          dynamic responseBody = jsonDecode(response.body);
+                          dynamic responseBody = jsonDecode(utf8.decode(response.bodyBytes));
                           if (response.statusCode == 200) {
                             _labs.clear();
                             fetchJson().then((value) {
