@@ -170,7 +170,7 @@ class _TableBodyState extends State<TableBody> {
                   width: cellWidth,
                   height: cellHeight,
                   decoration: BoxDecoration(
-                    color: Colors.yellow.withOpacity(0.3),
+                    color: kPrimaryColor.withOpacity(0.6),
                     border: Border.all(
                       color: Colors.black12,
                       width: 1.0,

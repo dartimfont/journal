@@ -21,7 +21,7 @@ class TableHead extends StatelessWidget {
       child: Row(
         children: [
           MultiplicationTableCell(
-            color: Colors.yellow.withOpacity(0.3),
+            color: kPrimaryColor.withOpacity(0.6),
           ),
           Expanded(
             child: ListView.builder(
@@ -34,7 +34,7 @@ class TableHead extends StatelessWidget {
                     width: cellWidth,
                     height: cellHeight,
                     decoration: BoxDecoration(
-                      color: Colors.yellow.withOpacity(0.3),
+                      color: kPrimaryColor.withOpacity(0.6),
                       border: Border.all(
                         color: Colors.black12,
                         width: 1.0,
