@@ -84,6 +84,12 @@ class LabItem(BaseModel):
     lab: str
 
 
+class SelectedLabsItemForStudent(BaseModel):
+    id_group: int
+    id_discipline: int
+    id_student: int
+
+
 class SelectedLabsItem(BaseModel):
     login: str
     id_group: int
@@ -375,6 +381,30 @@ async def students(item: StudentItem, response: Response):
 
 
 # Labs
+@app.post('/selected_labs_for_student')
+async def selected_labs_for_student(item: SelectedLabsItemForStudent, response: Response):
+    cur.execute("""
+            SELECT labs_for_student.id_student, labs_for_student.id_lab, lab, achieve 
+            FROM labs_for_student
+            JOIN students ON students.id_student = labs_for_student.id_student
+            JOIN labs ON labs.id_lab = labs_for_student.id_lab
+            JOIN labs_for_schedule ON labs_for_student.id_lab = labs_for_schedule.id_lab 
+            JOIN schedule ON schedule.id_schedule = labs_for_schedule.id_schedule 
+            WHERE schedule.id_group = '{0}' AND id_discipline = '{1}' AND students.id_student = '{2}'
+            GROUP BY labs_for_student.id_student, labs_for_student.id_lab, lab, achieve
+            ORDER BY lab ASC
+            """.format(item.id_group, item.id_discipline, item.id_student))
+
+    data = cur.fetchall()
+
+    if len(data) > 0:
+        print(data)
+        return data
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": "Such labs does not exist"}
+
+
 # Get labs by group, discipline, student
 @app.post('/selected_labs')
 async def selected_labs(item: SelectedLabsItem, response: Response):

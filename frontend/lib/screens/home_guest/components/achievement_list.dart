@@ -24,7 +24,7 @@ class _AchievementListState extends State<AchievementList> {
       "id_student": globals_student.id_student
     });
     dynamic response =
-        await http.post(Uri.parse("http://" + hostAndPort + "/selected_labs"),
+        await http.post(Uri.parse("http://" + hostAndPort + "/selected_labs_for_student"),
             headers: {
               'Content-Type': 'application/json; charset=UTF-8',
             },

@@ -38,6 +38,7 @@ class _StudentListState extends State<StudentList> {
         studentList.add(Student.fromJson(jsonData));
       }
     } else {
+      print(responseBody);
       buildShowDialog(context, responseBody);
     }
     return studentList;
