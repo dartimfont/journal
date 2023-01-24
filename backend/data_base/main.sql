@@ -120,3 +120,7 @@ CREATE TABLE IF NOT EXISTS labs_for_student (
     CONSTRAINT pk_id_student_id_lab PRIMARY KEY (id_student, id_lab)
 );
 
+SELECT lfs.id_lab, id_student, achieve
+FROM labs_for_schedule
+JOIN labs_for_student lfs on labs_for_schedule.id_lab = lfs.id_lab
+WHERE id_schedule = 84

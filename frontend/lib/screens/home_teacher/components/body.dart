@@ -5,9 +5,8 @@ import 'package:journal/size_config.dart';
 
 import 'group_list.dart';
 import 'discipline_list.dart';
-import 'student_list.dart';
-import 'achievement_list.dart';
 import 'lab_list.dart';
+import 'achivement_table.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -29,11 +28,9 @@ class _BodyState extends State<Body> {
       } else if (_selectedIndex == 2) {
         onSelect = LabList();
       } else if (_selectedIndex == 3) {
-        onSelect = StudentList();
-      } else if (_selectedIndex == 4) {
-        onSelect = AchievementList();
+        onSelect = AchievementTable();
       }
-    });
+  });
   }
 
   @override
@@ -67,15 +64,6 @@ class _BodyState extends State<Body> {
               height: getProportionateScreenHeight(25),
             ),
             label: "Labs",
-            backgroundColor: kPrimaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              "assets/icons/student.svg",
-              color: kTextColor,
-              height: getProportionateScreenHeight(25),
-            ),
-            label: "Students",
             backgroundColor: kPrimaryColor,
           ),
           BottomNavigationBarItem(

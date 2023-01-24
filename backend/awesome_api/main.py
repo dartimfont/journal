@@ -85,9 +85,9 @@ class LabItem(BaseModel):
 
 
 class SelectedLabsItem(BaseModel):
+    login: str
     id_group: int
     id_discipline: int
-    id_student: int
 
 
 class ScheduleLabsItem(BaseModel):
@@ -379,16 +379,13 @@ async def students(item: StudentItem, response: Response):
 @app.post('/selected_labs')
 async def selected_labs(item: SelectedLabsItem, response: Response):
     cur.execute("""
-        SELECT labs_for_student.id_student, labs_for_student.id_lab, lab, achieve 
-        FROM labs_for_student
-        JOIN students ON students.id_student = labs_for_student.id_student
-        JOIN labs ON labs.id_lab = labs_for_student.id_lab
-        JOIN labs_for_schedule ON labs_for_student.id_lab = labs_for_schedule.id_lab 
-        JOIN schedule ON schedule.id_schedule = labs_for_schedule.id_schedule 
-        WHERE schedule.id_group = '{0}' AND id_discipline = '{1}' AND students.id_student = '{2}'
-        GROUP BY labs_for_student.id_student, labs_for_student.id_lab, lab, achieve
-        ORDER BY lab ASC
-        """.format(item.id_group, item.id_discipline, item.id_student))
+        SELECT labs_for_student.id_student, labs_for_student.id_lab, achieve 
+        FROM schedule
+        JOIN labs_for_schedule ON labs_for_schedule.id_schedule = schedule.id_schedule
+        JOIN labs_for_student on labs_for_schedule.id_lab = labs_for_student.id_lab
+        JOIN teachers ON teachers.id_teacher = schedule.id_teacher 
+        WHERE teachers.login = '{0}' AND schedule.id_group = '{1}' AND id_discipline = '{2}'
+        """.format(item.login, item.id_group, item.id_discipline))
 
     data = cur.fetchall()
 

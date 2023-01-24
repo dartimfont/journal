@@ -12,4 +12,6 @@ const String kLoginNullError = "Please Enter your login";
 const String kPasswordNullError = "Please Enter your password";
 const String kShortPasswordError = "Password is too short";
 
+const int maxNumber = 20;
+
 
